@@ -1,0 +1,75 @@
+<html >
+    <head>
+	<title>Paper Kirby</title>
+
+	<meta charset="utf-8" />
+
+	<script type="text/javascript" src="JS/glMatrix-0.9.5.min.js"></script>
+	<script type="text/javascript" src="JS/webgl-utils.js"></script>
+	<script type="text/javascript" src="JS/Models/Map.js"></script>
+	<script type="text/javascript" src="JS/Models/Kirby.js"></script>
+	<script type="text/javascript" src="JS/Colisions.js"></script>
+        <script type="text/javascript" src="JS/Maths.js"></script>
+
+	<script id="shader-fs" type="x-shader/x-fragment">
+	    precision mediump float;
+
+	    varying vec2 vTextureCoord;
+	    varying vec3 vLightWeighting;
+
+	    uniform sampler2D uSampler;
+
+	    void main(void) {
+	    vec4 textureColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+	    gl_FragColor = vec4(textureColor.rgb * vLightWeighting, textureColor.a);
+	    }
+	</script>
+
+	<script id="shader-vs" type="x-shader/x-vertex">
+	    attribute vec3 aVertexPosition;
+	    attribute vec3 aVertexNormal;
+	    attribute vec2 aTextureCoord;
+
+	    uniform mat4 uMVMatrix;
+	    uniform mat4 uPMatrix;
+	    uniform mat3 uNMatrix;
+
+	    uniform vec3 uAmbientColor;
+
+	    uniform vec3 uLightingDirection;
+	    uniform vec3 uDirectionalColor;
+
+	    uniform bool uUseLighting;
+
+	    varying vec2 vTextureCoord;
+	    varying vec3 vLightWeighting;
+
+	    void main(void) {
+	    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+	    vTextureCoord = aTextureCoord;
+
+	    if (!uUseLighting) {
+	    vLightWeighting = vec3(1.0, 1.0, 1.0);
+	    } else {
+	    vec3 transformedNormal = uNMatrix * aVertexNormal;
+	    float directionalLightWeighting = max(dot(transformedNormal, uLightingDirection), 0.0);
+	    vLightWeighting = uAmbientColor + uDirectionalColor * directionalLightWeighting;
+	    }
+	    }
+	</script>
+
+	<script type="text/javascript" src="JS/webgl.js"></script>
+    </head>
+    <body onload="webGLStart();" style="text-align: center; font-family: 'Verdana'; color: #333;">
+	<header>
+	    <h1>Paper Kirby</h1>
+	</header>
+
+	<canvas id="canvas" style="border: solid 5px; border-color: #708090; border-radius: 5px" width="1000" height="675">canvas</canvas>
+
+	<footer>
+	    <p>←/→ ou Q/D : Se déplacer || Maj : Courir || Espace/Z/↑ : Sauter</p>
+	    <p>&copy; Copyright  by J.Murtin</p>
+	</footer>
+    </body>
+</html>
