@@ -1,9 +1,9 @@
 phy= {
 	ground: 0.0,
-	gravity: 0.5,
+	gravity: 0.2,
 
-	speed: 0.5,
-	accel: 0.05,
+	speed: 0.2,
+	accel: 0.01,
 
     };
 
@@ -48,10 +48,4 @@ function getCollisions() {
 	kirby.y = phy.ground;
 	phy.speed = phy.gravity;
     }
-
-/*if (kirby.x <= -1.5) {
-	kirby.x = -1.5;
-    } else if (kirby.x >= 9.5) {
-	kirby.x = 9.5;
-    }*/
 }

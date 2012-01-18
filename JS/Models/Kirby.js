@@ -190,12 +190,12 @@ function moveKirby() {
 
     if (kirby.state.walk == true && kirby.state.run == false) {
 	kirby.x += (0.05 * dir);
-	phy.gravity = 0.5;
+	phy.gravity = 0.2;
     }
 
     if (kirby.state.run == true && kirby.state.walk == true) {
 	kirby.x += (0.1 * dir);
-	phy.gravity = 0.7;
+	phy.gravity = 0.2;
     }
 
     if (kirby.state.jump == true) {
