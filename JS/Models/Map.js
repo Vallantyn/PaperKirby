@@ -6,7 +6,17 @@ var map = {
     texture: '',
 };
 
-var mapArray = [0,0,0,1,1,2,0,1,2,2,2,1,2,1,1,0,0];
+var mapArray = [
+    [1,1,1,1,1,1],
+    [0,0,1,1,1,0],
+    [0,0,0,1,1,0],
+    [1,1,0,0,0,0],
+    [0,0,0,1,1,1],
+    [0,0,0,0,1,1],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0],
+];
 
 var mVertices = [];
 var mTextureCoords = [];
@@ -16,321 +26,163 @@ var mNormals = [];
 var iid = 0;
 var items = 0;
 
-var id;
+function Block(z, y, id) {
+    this.zmin = -z*4.0-2.0;
+    this.zmax = -z*4.0+2.0;
+
+    this.ymax = y*2.0;
+    this.ymin = y*2.0 - 2.0;
+
+    this.vertices = [
+	// Top
+	2.0, this.ymax, this.zmax,
+	2.0, this.ymax, this.zmin,
+	    -2.0, this.ymax, this.zmax,
+	    -2.0, this.ymax, this.zmin,
+
+	// Bottom
+	2.0, this.ymin,  this.zmax,
+	2.0, this.ymin, this.zmin,
+	    -2.0, this.ymin,  this.zmax,
+	    -2.0, this.ymin, this.zmin,
+
+	// Face
+	2.0,  this.ymax,  this.zmax,
+	2.0, this.ymin,  this.zmax,
+	2.0,  this.ymax, this.zmin,
+	2.0, this.ymin, this.zmin,
+
+	// Back
+	    -2.0,  this.ymax,  this.zmax,
+	    -2.0, this.ymin,  this.zmax,
+	    -2.0,  this.ymax, this.zmin,
+	    -2.0, this.ymin, this.zmin,
+
+	// Left
+	2.0,  this.ymax, this.zmax,
+	    -2.0,  this.ymax, this.zmax,
+	2.0, this.ymin, this.zmax,
+	    -2.0, this.ymin, this.zmax,
+
+	// Right
+	2.0,  this.ymax, this.zmin,
+	    -2.0,  this.ymax, this.zmin,
+	2.0, this.ymin, this.zmin,
+	    -2.0, this.ymin, this.zmin,
+
+    ]
+
+    this.texture = [
+	// Top
+	0.0, 0.0,
+	0.0, 1.0,
+	1.0, 0.0,
+	1.0, 1.0,
+
+	// Bottom
+	0.0, 0.0,
+	0.0, 1.0,
+	1.0, 0.0,
+	1.0, 1.0,
+
+	// Face
+	0.0, 0.0,
+	0.0, 0.5,
+	1.0, 0.0,
+	1.0, 0.5,
+
+	// Back
+	0.0, 0.0,
+	0.0, 0.5,
+	1.0, 0.0,
+	1.0, 0.5,
+
+	// Left
+	0.0, 0.0,
+	0.0, 1.0,
+	0.5, 0.0,
+	0.5, 1.0,
+
+	// Right
+	0.0, 0.0,
+	0.0, 1.0,
+	0.5, 0.0,
+	0.5, 1.0,
+    ]
+
+    this.indices = [
+	// Top
+	id+0,id+1,id+2,	    id+1,id+2,id+3,
+
+	// Bottom
+	id+4,id+5,id+6,	    id+5,id+6,id+7,
+
+	// Face
+	id+8,id+9,id+10,	    id+9,id+10,id+11,
+
+	// Back
+	id+12,id+13,id+14,   id+13,id+14,id+15,
+
+	// Left
+	id+16,id+17,id+18,   id+17,id+18,id+19,
+
+	// Right
+	id+20,id+21,id+22,   id+21,id+22,id+23,
+    ]
+
+    this.normals = [
+	// Top
+	0.0, 1.0, 0.0,
+	0.0, 1.0, 0.0,
+	0.0, 1.0, 0.0,
+	0.0, 1.0, 0.0,
+
+	// Bottom
+	0.0, -1.0, 0.0,
+	0.0, -1.0, 0.0,
+	0.0, -1.0, 0.0,
+	0.0, -1.0, 0.0,
+
+	// Face
+	1.0, 0.0, 0.0,
+	1.0, 0.0, 0.0,
+	1.0, 0.0, 0.0,
+	1.0, 0.0, 0.0,
+
+	// Back
+	    -1.0, 0.0, 0.0,
+	    -1.0, 0.0, 0.0,
+	    -1.0, 0.0, 0.0,
+	    -1.0, 0.0, 0.0,
+
+	// Left
+	0.0, 0.0, -1.0,
+	0.0, 0.0, -1.0,
+	0.0, 0.0, -1.0,
+	0.0, 0.0, -1.0,
+
+	// Right
+	0.0, 0.0, 1.0,
+	0.0, 0.0, 1.0,
+	0.0, 0.0, 1.0,
+	0.0, 0.0, 1.0,
+    ]
+}
 
 function initMap() {
-    //debugger;
 
-    mVertices.push(
-	2.0,  0.0, 2.0,
-	2.0, -1.0, 2.0,
-	-2.0,  0.0, 2.0,
-	-2.0, -1.0, 2.0
-	);
-    mTextureCoords.push(
-	2.0, 0.5,
-	2.0, 0.0,
-	0.0, 0.5,
-	0.0, 0.0
-	);
-    mIndices.push(
-	iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-	);
-    mNormals.push(
-	0.0, 0.0, -1.0,
-	0.0, 0.0, -1.0,
-	0.0, 0.0, -1.0,
-	0.0, 0.0, -1.0
-	);
+    for (var y=0; y < mapArray.length; y++) {
+	for (var z=0; z < mapArray[y].length; z++) {
+	    if (mapArray[y][z] == 1) {
+		var block = new Block(z, y, iid);
 
-    iid +=4;
-    items++;
+		mVertices = mVertices.concat(block.vertices);
+		mTextureCoords = mTextureCoords.concat(block.texture);
+		mIndices = mIndices.concat(block.indices);
+		mNormals = mNormals.concat(block.normals);
 
-
-    for (var i=0; i < mapArray.length; i++) {
-	var imin = -i*4.0-2.0;
-	var imax = -i*4.0+2.0;
-
-	mVertices.push(
-	    2.0, 0.0, imax,
-	    2.0, -1.0, imax,
-	    2.0, 0.0, imin,
-	    2.0, -1.0, imin
-	    );
-	mTextureCoords.push(
-	    2.0, 0.5,
-	    2.0, 0.0,
-	    0.0, 0.5,
-	    0.0, 0.0
-	    );
-	mIndices.push(
-	    iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-	    );
-	mNormals.push(
-	    -1.0, 0.0, 0.0,
-	    -1.0, 0.0, 0.0,
-	    -1.0, 0.0, 0.0,
-	    -1.0, 0.0, 0.0
-	    );
-
-	iid +=4;
-	items ++;
-
-	if (mapArray[i] == 0) {
-	    mVertices.push(
-		2.0, 0.0, imin,
-		2.0, 0.0, imax,
-		-2.0, 0.0, imin,
-		-2.0, 0.0, imax
-		);
-	    mTextureCoords.push(
-		2.0, 2.0,
-		2.0, 0.0,
-		0.0, 2.0,
-		0.0, 0.0
-		);
-	    mIndices.push(
-		iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-		);
-	    mNormals.push(
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0
-		);
-	    iid +=4;
-	    items++;
-	} else if (mapArray[i] == 1) {
-	    if (mapArray[i-1] == 0) {
-		mVertices.push(
-		    2.0, 0.0, imax,
-		    2.0, 2.0, imax,
-		    -2.0, 0.0, imax,
-		    -2.0, 2.0, imax
-		    );
-		mTextureCoords.push(
-		    2.0, 1.0,
-		    2, 0.0,
-		    0.0, 1.0,
-		    0.0, 0.0
-		    );
-		mIndices.push(
-		    iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-		    );
-		mNormals.push(
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0
-		    );
-		iid +=4;
-		items++;
-	    }
-
-	    mVertices.push(
-		2.0, 2.0, imin,
-		2.0, 2.0, imax,
-		-2.0, 2.0, imin,
-		-2.0, 2.0, imax,
-
-		2.0, 0.0, imax,
-		2.0, 2.0, imax,
-		2.0, 0.0, imin,
-		2.0, 2.0, imin
-		);
-	    mTextureCoords.push(
-		2.0, 2.0,
-		2.0, 0.0,
-		0.0, 2.0,
-		0.0, 0.0,
-
-		2.0, 1.0,
-		2.0, 0.0,
-		0.0, 1.0,
-		0.0, 0.0
-		);
-	    mIndices.push(
-		iid, iid+1, iid+2,    iid+1, iid+2, iid+3,
-		iid+4, iid+5, iid+6,    iid+5, iid+6, iid+7
-		);
-	    mNormals.push(
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0
-		);
-	    iid +=8;
-	    items +=2;
-	    if (mapArray[i+1] == 0) {
-		mVertices.push(
-		    2.0, 0.0, imin,
-		    2.0, 2.0, imin,
-		    -2.0, 0.0, imin,
-		    -2.0, 2.0, imin
-		    );
-		mTextureCoords.push(
-		    2.0, 1.0,
-		    2.0, 0.0,
-		    0.0, 1.0,
-		    0.0, 0.0
-		    );
-		mIndices.push(
-		    iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-		    );
-		mNormals.push(
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0
-		    );
-		iid +=4;
-		items++;
-	    }
-
-	} else if (mapArray[i] == 2) {
-	    if (mapArray[i-1] == 1) {
-		mVertices.push(
-		    2.0, 2.0, imax,
-		    2.0, 4.0, imax,
-		    -2.0, 2.0, imax,
-		    -2.0, 4.0, imax
-		    );
-		mTextureCoords.push(
-		    2.0, 1.0,
-		    2.0, 0.0,
-		    0.0, 1.0,
-		    0.0, 0.0
-		    );
-		mIndices.push(
-		    iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-		    );
-		mNormals.push(
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0
-		    );
-		iid +=4;
-		items++;
-	    } else if (mapArray[i-1] == 0) {
-		mVertices.push(
-		    2.0, 0.0, imax,
-		    2.0, 4.0, imax,
-		    -2.0, 0.0, imax,
-		    -2.0, 4.0, imax
-		    );
-		mTextureCoords.push(
-		    2.0, 2.0,
-		    2.0, 0.0,
-		    0.0, 2.0,
-		    0.0, 0.0
-		    );
-		mIndices.push(
-		    iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-		    );
-		mNormals.push(
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0,
-		    0.0, 0.0, -1.0
-		    );
-		iid +=4;
-		items++;
-	    }
-
-	    mVertices.push(
-		2.0, 4.0, imin,
-		2.0, 4.0, imax,
-		-2.0, 4.0, imin,
-		-2.0, 4.0, imax,
-
-		2.0, 0.0, imax,
-		2.0, 4.0, imax,
-		2.0, 0.0, imin,
-		2.0, 4.0, imin
-		);
-	    mTextureCoords.push(
-		2.0, 2.0,
-		2.0, 0.0,
-		0.0, 2.0,
-		0.0, 0.0,
-
-		2.0, 2.0,
-		2.0, 0.0,
-		0.0, 2.0,
-		0.0, 0.0
-		);
-	    mIndices.push(
-		iid, iid+1, iid+2,    iid+1, iid+2, iid+3,
-		iid+4, iid+5, iid+6,    iid+5, iid+6, iid+7
-
-		);
-	    mNormals.push(
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0
-		);
-	    iid +=8;
-	    items +=2;
-	    if (mapArray[i+1] == 1) {
-		mVertices.push(
-		    2.0, 2.0, imin,
-		    2.0, 4.0, imin,
-		    -2.0, 2.0, imin,
-		    -2.0, 4.0, imin
-		    );
-		mTextureCoords.push(
-		    2.0, 1.0,
-		    2.0, 0.0,
-		    0.0, 1.0,
-		    0.0, 0.0
-		    );
-		mIndices.push(
-		    iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-		    );
-		mNormals.push(
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0
-		    );
-		iid +=4;
-		items++;
-	    } else if (mapArray[i+1] == 0) {
-		mVertices.push(
-		    2.0, 0.0, imin,
-		    2.0, 4.0, imin,
-		    -2.0, 0.0, imin,
-		    -2.0, 4.0, imin
-		    );
-		mTextureCoords.push(
-		    2.0, 2.0,
-		    2.0, 0.0,
-		    0.0, 2.0,
-		    0.0, 0.0
-		    );
-		mIndices.push(
-		    iid, iid+1, iid+2,    iid+1, iid+2, iid+3
-		    );
-		mNormals.push(
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0,
-		    0.0, 0.0, 1.0
-		    );
-		iid +=4;
-		items++;
+		iid +=24;
+		items +=6;
 	    }
 	}
     }
@@ -363,7 +215,7 @@ function initMap() {
     map.vertexNormalBuffer.itemSize = 3;
     map.vertexNormalBuffer.numItems = items;
 
-     map.texture = gl.createTexture();
+    map.texture = gl.createTexture();
 
     map.texture.img = new Image();
     map.texture.img.onload = function() {
