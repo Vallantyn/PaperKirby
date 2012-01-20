@@ -149,9 +149,10 @@ function drawScene() {
 
 
     drawMap();
-    //drawPortal(5,0, 'blueTexture');
-    drawPortal(0,0, 'orangeTexture');
+    drawPortalIn(5,0);
     drawKirby();
+    drawPortalOut(0,0);
+
 }
 
 function tick () {

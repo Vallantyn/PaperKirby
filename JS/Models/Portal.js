@@ -94,7 +94,7 @@ function animPortal() {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
 }
 
-function drawPortal(x, y, t) {
+function drawPortalIn(x, y) {
     mvPushMatrix();
 
     drawToMap();
@@ -106,7 +106,36 @@ function drawPortal(x, y, t) {
     mat4.rotate(mvMatrix, degToRad(portal.anim.r), [1.0, 0.0, 0.0])
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, portal[t]);
+    gl.bindTexture(gl.TEXTURE_2D, portal.blueTexture);
+    gl.uniform1i(shaderProgram.samplerUniform, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, portal.vertexBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, portal.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, portal.textureBuffer);
+    gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, portal.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+    setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, portal.vertexBuffer.numItems);
+
+    gl.uniform1i(shaderProgram.useLightingUniform, true);
+    //gl.uniform3f(shaderProgram.colorUniform, 1.0, 1.0, 1.0);
+    mvPopMatrix();
+}
+
+function drawPortalOut(x, y) {
+    mvPushMatrix();
+
+    drawToMap();
+
+    gl.uniform1i(shaderProgram.useLightingUniform, false);
+    //gl.uniform3f(shaderProgram.colorUniform, 0.0, 1.0/255*160, 1.0/255*190);
+
+    mat4.translate(mvMatrix, [2.0, y*2+1.0, -x*4]);
+    mat4.rotate(mvMatrix, degToRad(portal.anim.r), [1.0, 0.0, 0.0])
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, portal.orangeTexture);
     gl.uniform1i(shaderProgram.samplerUniform, 0);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, portal.vertexBuffer);
