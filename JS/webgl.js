@@ -16,8 +16,20 @@ function webGLStart() {
     initGL(canvas);
     initShaders();
     initKirby();
-    initMap();
-    initPortal();
+
+    map = new Map([
+    [1,1,1,1,1,1],
+    [0,0,1,1,1,0],
+    [0,0,0,1,1,0],
+    [1,1,0,0,0,0],
+    [0,0,0,1,1,1],
+    [0,0,0,0,1,1],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0]
+]);
+
+    map.Init();
 
     document.addEventListener('keydown', keyDown, false);
     document.addEventListener('keyup', keyUp, false);
@@ -113,7 +125,6 @@ function getShader(gl, id) {
 
 function handleLoadedTexture(t) {
     gl.bindTexture(gl.TEXTURE_2D, t);
-    //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, t.img);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.MIPMAP_LINEAR_NEAREST);
@@ -126,15 +137,12 @@ function drawScene() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.enable(gl.BLEND);
-    //gl.enable(gl.COLOR_MATERIAL);
-    //gl.colorMaterial(gl.FRONT, gl.EMISSION);
 
     mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
     mat4.identity(mvMatrix);
 
     mat4.translate(mvMatrix, [0.0, 0.0, -10.0])
-    //mat4.rotate(mvMatrix, degToRad(10), [1,0,0]);
 
     gl.uniform1i(shaderProgram.useTexturesUniform, false);
     gl.uniform1i(shaderProgram.useLightingUniform, true);
@@ -148,18 +156,16 @@ function drawScene() {
 
 
 
-    drawMap();
-    drawPortalIn(5,0);
+    map.Draw();
+    portal.Draw();
     drawKirby();
-    drawPortalOut(0,0);
-
 }
 
 function tick () {
     requestAnimFrame(tick);
 
     animKirby();
-    animPortal();
+    portal.Anim();
     drawScene();
     moveKirby();
 }
