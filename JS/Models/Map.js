@@ -70,7 +70,7 @@ function Map(a) {
 
 	this.texture.img.src = "Res/map.png";
 
-	portal = new Portal(5,1,0,2);
+	portal = new Portal(5,1,0,3);
 	portal.Init();
 
     }
