@@ -1,10 +1,10 @@
-function Portal(xIn, yIn, xOut, yOut) {
+function Portal(xR, yR, xL, yL) {
     this.vertexBuffer = gl.createBuffer();
     this.vertexBuffer.itemSize = 3;
     this.vertexBuffer.numItems = 4;
 
-    this.In = [xIn, yIn];
-    this.Out = [xOut, yOut];
+    this.right = [xR, yR];
+    this.left = [xL, yL];
 
     this.vertices = [
     0.0, 1.0, 1.0,
@@ -34,25 +34,27 @@ function Portal(xIn, yIn, xOut, yOut) {
     this.orangeTexture = gl.createTexture();
 
     this.anim = {
-	i:	0,
-	c:	0,
+	i: 0,
+	c: 0,
 
-	f:	6,
-	steps:	3,
+	f: 6,
+	steps: 3,
 
-	r: 0,
+	r: 0
     }
 
     this.Init = function() {
 
 	this.blueTexture.img = new Image();
+	this.blueTexture.img._parent = this.blueTexture;
 	this.blueTexture.img.onload = function() {
-	    handleLoadedTexture(portal.blueTexture);
+	    handleLoadedTexture(this._parent);
 	};
 
 	this.orangeTexture.img = new Image();
+	this.orangeTexture.img._parent = this.orangeTexture;
 	this.orangeTexture.img.onload = function() {
-	    handleLoadedTexture(portal.orangeTexture);
+	    handleLoadedTexture(this._parent);
 	};
 
 	this.blueTexture.img.src = "Res/bluePortal.png";
@@ -147,7 +149,93 @@ function Portal(xIn, yIn, xOut, yOut) {
     }
 
     this.Draw = function() {
-	this.DrawIn(xIn, yIn);
-	this.DrawOut(xOut, yOut);
+	this.DrawIn(xR, yR);
+	this.DrawOut(xL, yL);
+    }
+
+    this.handleOrangeTexture = function() {
+	gl.bindTexture(gl.TEXTURE_2D, this.orangeTexture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.orangeTexture.img);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.MIPMAP_LINEAR_NEAREST);
+	gl.generateMipmap(gl.TEXTURE_2D);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+
+}
+
+function getPortal() {
+    var left = false;
+    var right = false;
+    var iLeft, iRight;
+    for (var i=0; i<map.portals.length; i++) {
+	if (cell.cx == map.portals[i].left[0] &&
+	    cell.cy == map.portals[i].left[1]) {
+	    left = true;
+	    iLeft = i;
+	}
+
+	if (cell.cx == map.portals[i].right[0] &&
+	    cell.cy == map.portals[i].right[1]) {
+	    right = true;
+	    iRight = i;
+	}
+    }
+
+    if (left && !right) {
+	if (kirby.x >= cell.frontLim+0.3 &&
+	    kirby.y < cell.cy*2-1) {
+
+	    kirby.x = map.portals[iLeft].right[0]*4-1.9;
+	    kirby.y = (map.portals[iLeft].right[1]-1)*2;
+
+	} else if (kirby.x >= cell.frontLim+0.3 &&
+	    kirby.y > cell.cy*2-1) {
+
+	    kirby.x = cell.frontLim;
+	} else if (cell.left == 1 && kirby.x < cell.backLim && kirby.y < cell.cy*2) kirby.x = cell.backLim;
+	return true;
+
+    } else if (!left && right) {
+	if (kirby.x <= cell.backLim-0.3 &&
+	    kirby.y < cell.cy*2-1) {
+
+	    kirby.x = map.portals[iRight].left[0]*4+1.9;
+	    kirby.y = (map.portals[iRight].left[1]-1)*2;
+	} else if (kirby.x <= cell.backLim-0.3 &&
+	    kirby.y > cell.cy*2-1) {
+
+	    kirby.x = cell.backLim;
+	} else if (cell.right == 1 && kirby.x > cell.frontLim && kirby.y < cell.cy*2) kirby.x = cell.frontLim;
+	return true;
+
+    } else if (left && right) {
+	if (kirby.x >= cell.frontLim+0.3 &&
+	    kirby.y < cell.cy*2-1) {
+
+	    kirby.x = map.portals[iLeft].right[0]*4-1.9;
+	    kirby.y = (map.portals[iLeft].right[1]-1)*2;
+
+	} else if (kirby.x <= cell.backLim-0.3 &&
+	    kirby.y < cell.cy*2-1) {
+
+	    kirby.x = map.portals[iRight].left[0]*4+1.9;
+	    kirby.y = (map.portals[iRight].left[1]-1)*2;
+
+	} else if (kirby.x <= cell.backLim-0.3 &&
+	    kirby.y > cell.cy*2-1) {
+
+	    kirby.x = cell.backLim;
+
+	} else if (kirby.x >= cell.frontLim+0.3 &&
+	    kirby.y > cell.cy*2-1) {
+
+	    kirby.x = cell.frontLim;
+	}
+	return true;
+
+    } else {
+	return false;
     }
 }

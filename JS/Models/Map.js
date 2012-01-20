@@ -17,7 +17,7 @@ function Map(a) {
 
     this.texture = gl.createTexture();
 
-    this.array = a;
+    this.array = a.reverse();
 
     this.vertices = [];
     this.textureCoords = [];
@@ -44,7 +44,7 @@ function Map(a) {
 
 		this.iid +=24;
 
-		if (this.array[y][z] == 2) ;
+		if (this.array[y][z] == 2);
 	    }
 	}
     }
@@ -64,14 +64,22 @@ function Map(a) {
     this.Init = function() {
 
 	this.texture.img = new Image();
+	this.texture.img._parent = this.texture;
 	this.texture.img.onload = function() {
-	    handleLoadedTexture(map.texture);
+	    handleLoadedTexture(this._parent);
 	}
 
 	this.texture.img.src = "Res/map.png";
 
-	portal = new Portal(5,1,0,3);
-	portal.Init();
+	this.portals = new Array();
+
+	//map.portals[0] = new Portal(5,1,0,3);
+	this.portals.push(new Portal(5,1,0,3));
+	this.portals.push(new Portal(6,6,4,6));
+	this.portals.push(new Portal(9,2,7,1));
+	this.portals.push(new Portal(7,1,13,1));
+	this.portals.push(new Portal(7,3,7,3));
+	for (var i=0; i<this.portals.length; i++) this.portals[i].Init();
 
     }
 

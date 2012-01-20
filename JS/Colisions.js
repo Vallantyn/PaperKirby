@@ -7,16 +7,17 @@ phy= {
 
 };
 
-function getPortal() {
-
-}
-
 function getCollisions() {
 
     cell = {
 	cx: Math.floor((kirby.x+2)/4),
 	cy: Math.floor((kirby.y)/2)+1,
     };
+
+    up = false;
+    down = false;
+    left = false;
+    right = false;
 
     cell.right = map.array[cell.cy][cell.cx+1];
     cell.left = map.array[cell.cy][cell.cx-1];
@@ -25,28 +26,44 @@ function getCollisions() {
 
     cell.backLim = cell.cx*4 -1.6;
     cell.frontLim = cell.cx*4 +1.6;
-    cell.upLim = cell.cy*2 -0.4;
+    cell.upLim = (cell.cy-1)*2 +1.6;
+
+    if (map.array[cell.cy][cell.cx] == 1) {
+	if (kirby.x > cell.cx*4) {
+	    right = true;
+	}
+
+	if (kirby.x < cell.cx*4) {
+	    left = true;
+	}
+
+	if (kirby.y > (cell.cy-1)*2+1) {
+	    up = true;
+	}
+
+	if (kirby.y < (cell.cy-1)*2+1) {
+	    down = true;
+	}
+
+	if (up && !down && !left && !right) {
+	    kirby.y += 1;
+	} else if (!up && down && !left && !right) {
+	    kirby.y -= 1;
+	} else if (!up && !down && left && !right) {
+	    kirby.x -= 2;
+	} else if (!up && !down && !left && right) {
+	    kirby.x += 2;
+	}
+    }
 
     if (cell.cx == 0 && kirby.x <= cell.backLim) kirby.x = cell.backLim;
     if (cell.cx == map.array[cell.cy].length - 1 && kirby.x >= cell.frontLim) kirby.x = cell.frontLim;
 
     phy.ground = (cell.cy*2 - 2)*cell.down;
 
-    if (cell.cx == portal.Out[0] && cell.cy == portal.Out[1]) {
-	if (kirby.x >= cell.frontLim+0.3 && kirby.y < cell.cy*2-1) {
-	    kirby.x = portal.In[0]*4-1.9;
-	    kirby.y = portal.In[1]*2-1;
-	} else if (kirby.x >= cell.frontLim+0.3 && kirby.y > cell.cy*2-1) {
-	    kirby.x = cell.frontLim;
-	}
-    } else if (cell.cx == portal.In[0] && cell.cy == portal.In[1]) {
-	if (kirby.x <= cell.backLim-0.3 && kirby.y < cell.cy*2-1) {
-	    kirby.x = portal.Out[0]*4+1.9;
-	    kirby.y = portal.Out[1]*2-1;
-	} else if (kirby.x <= cell.backLim-0.3 && kirby.y > cell.cy*2-1) {
-	    kirby.x = cell.backLim;
-	}
-    } else {
+
+
+    if (!getPortal()) {
 
 	if (cell.right == 1 && kirby.x > cell.frontLim && kirby.y < cell.cy*2) kirby.x = cell.frontLim;
 
