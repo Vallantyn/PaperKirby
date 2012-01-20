@@ -227,10 +227,7 @@ function initMap() {
 function drawMap() {
     mvPushMatrix();
 
-    mat4.rotate(mvMatrix, degToRad(10), [1, 0,0]);
-    mat4.rotate(mvMatrix, degToRad(-90), [0,1,0]);
-    mat4.translate(mvMatrix, [0.0, -kirby.y, kirby.x])
-
+    drawToMap();
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, map.texture);
@@ -248,6 +245,8 @@ function drawMap() {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, map.vertexIndexBuffer);
     setMatrixUniforms();
     gl.drawElements(gl.TRIANGLES, map.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+    //drawPortal(6,6);
     mvPopMatrix();
 }
 

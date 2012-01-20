@@ -5,6 +5,7 @@ var gl;
 var mvMatrix = mat4.create();
 var mvMatrixStack = [];
 var pMatrix = mat4.create();
+var tMatrix = mat4.create();
 
 var shaderProgram;
 
@@ -16,7 +17,7 @@ function webGLStart() {
     initShaders();
     initKirby();
     initMap();
-    //initTexture();
+    initPortal();
 
     document.addEventListener('keydown', keyDown, false);
     document.addEventListener('keyup', keyUp, false);
@@ -72,6 +73,7 @@ function initShaders() {
     shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
     shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
     shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+//shaderProgram.alphaUniform = gl.getUniformLocation(shaderProgram, "uAlpha");
 }
 
 function getShader(gl, id) {
@@ -107,12 +109,6 @@ function getShader(gl, id) {
     }
 
     return shader;
-}
-
-function initTexture() {
-
-
-
 }
 
 function handleLoadedTexture(t) {
@@ -153,7 +149,8 @@ function drawScene() {
 
 
     drawMap();
-    //gl.color3f(0.8, 0.8, 0.8);
+    //drawPortal(5,0, 'blueTexture');
+    drawPortal(0,0, 'orangeTexture');
     drawKirby();
 }
 
@@ -161,8 +158,15 @@ function tick () {
     requestAnimFrame(tick);
 
     animKirby();
+    animPortal();
     drawScene();
     moveKirby();
+}
+
+function drawToMap() {
+    mat4.rotate(mvMatrix, degToRad(10), [1, 0,0]);
+    mat4.rotate(mvMatrix, degToRad(-90), [0,1,0]);
+    mat4.translate(mvMatrix, [0.0, -kirby.y, kirby.x])
 }
 
 function keyDown(e) {

@@ -118,7 +118,7 @@ function initKirby() {
     kirby.vertexIndexBuffer.itemSize = 1;
     kirby.vertexIndexBuffer.numItems = 6;
 
-     kirby.texture = gl.createTexture();
+    kirby.texture = gl.createTexture();
 
     kirby.texture.img = new Image();
     kirby.texture.img.onload = function() {
@@ -219,6 +219,8 @@ function moveKirby() {
 
 function drawKirby() {
     mvPushMatrix();
+    gl.uniform1i(shaderProgram.useLightingUniform, false);
+
     mat4.translate(mvMatrix, [0.0, 0.4, 0.0])
 
     mat4.rotate(mvMatrix, degToRad(kirby.r), [0,1,0]);
@@ -235,5 +237,7 @@ function drawKirby() {
 
     setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, kirby.vertexPosBuffer.numItems);
+    
+    gl.uniform1i(shaderProgram.useLightingUniform, true);
     mvPopMatrix();
 }

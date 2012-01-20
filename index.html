@@ -7,6 +7,7 @@
 	<script type="text/javascript" src="JS/glMatrix-0.9.5.min.js"></script>
 	<script type="text/javascript" src="JS/webgl-utils.js"></script>
 	<script type="text/javascript" src="JS/Models/Map.js"></script>
+	<script type="text/javascript" src="JS/Models/Portal.js"></script>
 	<script type="text/javascript" src="JS/Models/Kirby.js"></script>
 	<script type="text/javascript" src="JS/Colisions.js"></script>
         <script type="text/javascript" src="JS/Maths.js"></script>
@@ -18,6 +19,8 @@
 	    varying vec3 vLightWeighting;
 
 	    uniform sampler2D uSampler;
+
+	    uniform vec3 uColor;
 
 	    void main(void) {
 	    vec4 textureColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
