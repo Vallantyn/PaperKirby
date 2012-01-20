@@ -125,7 +125,7 @@ function Portal(xIn, yIn, xOut, yOut) {
 
 	gl.uniform1i(shaderProgram.useLightingUniform, false);
 
-	mat4.translate(mvMatrix, [0.0, y*2-1.0, -x*4-1.9]);
+	mat4.translate(mvMatrix, [0.0, y*2+1, -x*4-1.9]);
 	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
 	mat4.rotate(mvMatrix, degToRad(-this.anim.r), [1.0, 0.0, 0.0])
 

@@ -33,11 +33,19 @@ function getCollisions() {
     phy.ground = (cell.cy*2 - 2)*cell.down;
 
     if (cell.cx == portal.Out[0] && cell.cy == portal.Out[1]) {
-	if (kirby.x >= cell.frontLim+0.3 && kirby.y < cell.cy*2-1) kirby.x = portal.In[0]*4-1.9;
-	else if (kirby.y > cell.cy*2-1) kirby.x = cell.frontLim;
+	if (kirby.x >= cell.frontLim+0.3 && kirby.y < cell.cy*2-1) {
+	    kirby.x = portal.In[0]*4-1.9;
+	    kirby.y = portal.In[1]*2;
+	} else if (kirby.x >= cell.frontLim+0.3 && kirby.y > cell.cy*2-1) {
+	    kirby.x = cell.frontLim;
+	}
     } else if (cell.cx == portal.In[0] && cell.cy == portal.In[1]) {
-	if (kirby.x <= cell.backLim-0.3 && kirby.y < cell.cy*2-1) kirby.x = portal.Out[0]*4+1.9;
-	else if (kirby.y > cell.cy*2-1) kirby.x = cell.backLim;
+	if (kirby.x <= cell.backLim-0.3 && kirby.y < cell.cy*2-1) {
+	    kirby.x = portal.Out[0]*4+1.9;
+	    kirby.y = portal.Out[1]*2;
+	} else if (kirby.x <= cell.backLim-0.3 && kirby.y > cell.cy*2-1) {
+	    kirby.x = cell.backLim;
+	}
     } else {
 
 	if (cell.right == 1 && kirby.x > cell.frontLim && kirby.y < cell.cy*2) kirby.x = cell.frontLim;
