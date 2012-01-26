@@ -29,7 +29,7 @@ function Map(a) {
 
     for (var y=0; y < this.array.length; y++) {
 	for (var z=0; z < this.array[y].length; z++) {
-	    if (this.array[y][z] > 0) {
+	    if (this.array[y][z] == 1) {
 		var block = new Block(z, y, this.iid);
 
 		this.vertices = this.vertices.concat(block.vertices);
@@ -43,8 +43,6 @@ function Map(a) {
 		this.normalBuffer.numItems += block.normalsItems;
 
 		this.iid +=24;
-
-		if (this.array[y][z] == 2);
 	    }
 	}
     }
@@ -74,13 +72,12 @@ function Map(a) {
 	this.portals = new Array();
 
 	//map.portals[0] = new Portal(5,1,0,3);
-	this.portals.push(new Portal(5,1,0,3));
-	this.portals.push(new Portal(6,6,4,6));
-	this.portals.push(new Portal(9,2,7,1));
-	this.portals.push(new Portal(7,1,13,1));
-	this.portals.push(new Portal(7,3,7,3));
+	this.portals.push(new Portal(4,1,1,3));
+	this.portals.push(new Portal(5,6,5,6));
+	this.portals.push(new Portal(8,2,8,1));
+	this.portals.push(new Portal(6,1,14,1));
+	this.portals.push(new Portal(6,3,8,3));
 	for (var i=0; i<this.portals.length; i++) this.portals[i].Init();
-
     }
 
     this.Draw = function() {

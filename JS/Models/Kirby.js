@@ -7,6 +7,10 @@ var kirby = {
     y: 0,
     r: 0,
 
+    dir: 1,
+    fDir:1,
+    yDir:-1,
+
     state : {
 	idle: true,
 	walk: false,
@@ -82,6 +86,8 @@ var kirby = {
 	}
     }
 };
+
+
 
 function initKirby() {
     kirby.vertexPosBuffer = gl.createBuffer();
@@ -174,47 +180,160 @@ function animKirby() {
 }
 
 function moveKirby() {
-    var dir;
+    cell = {
+	cx: Math.floor((kirby.x+2)/4),
+	cy: Math.floor((kirby.y+0.5)/2+1),
+    };
 
-    if (kirby.state.left == true && kirby.state.right == false) {
-	kirby.r = 0;
-	dir = -1;
-    } else if (kirby.state.right == true && kirby.state.left == false) {
-	kirby.r = 180;
-	dir = 1;
+    if (map.unverse) {
+	Unverse();
+    } else {
+
+	if (kirby.state.left && !kirby.state.right) {
+	    kirby.r = 0;
+	    kirby.fDir = 1;
+	    kirby.dir = -1;
+	} else if (kirby.state.right && !kirby.state.left) {
+	    kirby.r = 180;
+	    kirby.fDir = 1;
+	    kirby.dir = 1;
+	}
+
+	if (kirby.state.jump) {
+	    kirby.yDir = 1;
+	    kirby.fDir*=2;
+	}
+
+	if (kirby.state.fall) {
+	    kirby.yDir = -1;
+	}
+
+	getCollision(0, phy.speed*kirby.yDir);
+
+	if (kirby.state.jump) {
+	    if (bBox[0].pass && bBox[2].pass) {
+		kirby.y += phy.speed;
+
+		if(phy.speed <= 0.0) {
+		    kirby.state.jump = false;
+		    kirby.state.fall = true;
+		    phy.speed = 0.0;
+		} else {
+		    phy.speed -= phy.accel;
+		}
+	    } else {
+		kirby.state.jump = false;
+		kirby.state.fall = true;
+		phy.speed = 0.0;
+	    }
+	}
+
+	if(kirby.state.fall) {
+	    if(bBox[1].pass && bBox[3].pass) {
+		if (kirby.state.fall == false) phy.speed = 0.0;
+		kirby.state.fall = true;
+		kirby.y -= phy.speed;
+
+		if(phy.speed < phy.gravity) {
+		    phy.speed += phy.accel;
+		} else {
+		    phy.speed = phy.gravity;
+		}
+	    } else {
+		kirby.state.fall = false;
+		kirby.y = cell.cy*2 - 2;
+		phy.speed = phy.gravity;
+	    }
+	}
+
+	getCollision(0.05 * kirby.dir, 0);
+	if (kirby.state.walk && !kirby.state.run && kirby.state.right && !kirby.state.left) {
+	    if(bBox[0].pass && bBox[1].pass) {
+		kirby.x += 0.05*kirby.fDir;
+		phy.gravity = 0.2;
+		checkFall();
+	    } else if (portalLeft()) {
+		kirby.x += 0.05*kirby.fDir;
+//		console.log('portal ' + iPortal + ' passed')
+	    } else if (cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
+		kirby.x = map.portals[iPortal].right[0]*4 +1.64;
+		kirby.y = (map.portals[iPortal].right[1]-1)*2;
+	    } else {
+		kirby.x = cell.cx*4 +1.64;
+		phy.gravity = 0.2;
+	    }
+	}
+
+	if (kirby.state.walk && !kirby.state.run && !kirby.state.right && kirby.state.left) {
+	    if(bBox[2].pass && bBox[3].pass) {
+		kirby.x -= 0.05*kirby.fDir;
+		phy.gravity = 0.2;
+		checkFall();
+	    } else if (portalRight()) {
+		kirby.x -= 0.05*kirby.fDir;
+//		console.log('portal ' + iPortal + ' passed')
+	    } else if (cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
+		kirby.x = map.portals[iPortal].left[0]*4 -1.64;
+		kirby.y = (map.portals[iPortal].left[1]-1)*2;
+	    } else {
+		kirby.x = cell.cx*4 -1.64;
+		phy.gravity = 0.2;
+	    }
+	}
+
+	getCollision(0.1 * kirby.dir, 0);
+	if (kirby.state.walk && kirby.state.run && kirby.state.right && !kirby.state.left) {
+	    if(bBox[0].pass && bBox[1].pass) {
+		kirby.x += 0.1*kirby.fDir;
+		phy.gravity = 0.2;
+
+	    } else if (portalLeft()) {
+		kirby.x += 0.1*kirby.fDir;
+//		console.log('portal ' + iPortal + ' passed')
+	    } else if (cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
+		kirby.x = map.portals[iPortal].right[0]*4 +1.64;
+		kirby.y = (map.portals[iPortal].right[1]-1)*2;
+	    } else {
+		kirby.x = cell.cx*4 +1.64;
+		phy.gravity = 0.2;
+	    }
+	}
+
+	if (kirby.state.walk && kirby.state.run && !kirby.state.right && kirby.state.left) {
+	    if(bBox[2].pass && bBox[3].pass) {
+		kirby.x -= 0.1*kirby.fDir;
+		phy.gravity = 0.2;
+
+	    } else if (portalRight()) {
+		kirby.x -= 0.1*kirby.fDir;
+//		console.log('portal ' + iPortal + ' passed')
+	    } else if (cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
+		kirby.x = map.portals[iPortal].left[0]*4 -1.64;
+		kirby.y = (map.portals[iPortal].left[1]-1)*2;
+	    } else {
+		kirby.x = cell.cx*4 -1.64;
+		phy.gravity = 0.2;
+	    }
+	}
+
+	checkFall();
+
+	if	(kirby.state.fall == true && kirby.state.jump == false) {
+	    id = 'fall';
+	}
     }
+}
 
-    if (kirby.state.jump) {
-	dir*=2;
-    }
+function checkFall() {
+    if (!kirby.state.jump && !kirby.state.fall) {
+	getCollision(0, -phy.speed);
 
-    if (kirby.state.walk == true && kirby.state.run == false) {
-	kirby.x += (0.05 * dir);
-	phy.gravity = 0.2;
-    }
-
-    if (kirby.state.run == true && kirby.state.walk == true) {
-	kirby.x += (0.1 * dir);
-	phy.gravity = 0.2;
-    }
-
-    if (kirby.state.jump == true) {
-	kirby.y += phy.speed;
-
-	if(phy.speed <= 0.0) {
+	if (bBox[1].pass && bBox[3].pass) {
 	    kirby.state.jump = false;
 	    kirby.state.fall = true;
 	    phy.speed = 0.0;
-	} else {
-	    phy.speed -= phy.accel;
 	}
     }
-
-    if	(kirby.state.fall == true && kirby.state.jump == false) {
-	id = 'fall';
-    }
-
-    getCollisions();
 }
 
 function drawKirby() {
@@ -237,7 +356,7 @@ function drawKirby() {
 
     setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, kirby.vertexPosBuffer.numItems);
-    
+
     gl.uniform1i(shaderProgram.useLightingUniform, true);
     mvPopMatrix();
 }

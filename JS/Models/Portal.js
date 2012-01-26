@@ -1,3 +1,5 @@
+var iPortal = 0;
+
 function Portal(xR, yR, xL, yL) {
     this.vertexBuffer = gl.createBuffer();
     this.vertexBuffer.itemSize = 3;
@@ -77,8 +79,6 @@ function Portal(xR, yR, xL, yL) {
 	xOri = 1.0 * this.anim.c;
 	xEnd = xOri + 1.0;
 
-
-
 	this.textureCoords = [
 	xOri, 0.0,
 	xEnd, 0.0,
@@ -86,20 +86,20 @@ function Portal(xR, yR, xL, yL) {
 	xEnd, 1.0
 	];
 
-	this.anim.r += 90/60;
+	this.anim.r += 1.5;
 	//portal.anim.i++;
 
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoords), gl.STATIC_DRAW);
     }
 
-    this.DrawIn = function(x, y) {
+    this.DrawLeft = function(x, y) {
 	mvPushMatrix();
 
 	drawToMap();
 
 	gl.uniform1i(shaderProgram.useLightingUniform, false);
 
-	mat4.translate(mvMatrix, [0.0, y*2-1.0, -x*4+1.9]);
+	mat4.translate(mvMatrix, [0.0, y*2-1.0, -x*4-2.01]);
 	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
 	mat4.rotate(mvMatrix, degToRad(this.anim.r), [1.0, 0.0, 0.0])
 
@@ -120,14 +120,14 @@ function Portal(xR, yR, xL, yL) {
 	mvPopMatrix();
     }
 
-    this.DrawOut = function(x, y) {
+    this.DrawRight = function(x, y) {
 	mvPushMatrix();
 
 	drawToMap();
 
 	gl.uniform1i(shaderProgram.useLightingUniform, false);
 
-	mat4.translate(mvMatrix, [0.0, y*2-1, -x*4-1.9]);
+	mat4.translate(mvMatrix, [0.0, y*2-1, -x*4+2.01]);
 	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
 	mat4.rotate(mvMatrix, degToRad(-this.anim.r), [1.0, 0.0, 0.0])
 
@@ -149,10 +149,9 @@ function Portal(xR, yR, xL, yL) {
     }
 
     this.Draw = function() {
-	this.DrawIn(xR, yR);
-	this.DrawOut(xL, yL);
+	this.DrawLeft(this.right[0], this.right[1]);
+	this.DrawRight(this.left[0], this.left[1]);
     }
-
     this.handleOrangeTexture = function() {
 	gl.bindTexture(gl.TEXTURE_2D, this.orangeTexture);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.orangeTexture.img);
@@ -161,8 +160,6 @@ function Portal(xR, yR, xL, yL) {
 	gl.generateMipmap(gl.TEXTURE_2D);
 	gl.bindTexture(gl.TEXTURE_2D, null);
     }
-
-
 }
 
 function getPortal() {
@@ -238,4 +235,24 @@ function getPortal() {
     } else {
 	return false;
     }
+}
+
+function portalRight() {
+    for (var i=0; i<map.portals.length; i++) {
+	if ((cell.cx -1) == map.portals[i].right[0] && cell.cy == map.portals[i].right[1]) {
+	    iPortal = i;
+	    return true;
+	}
+    }
+    return false;
+}
+
+function portalLeft() {
+    for (var i=0; i<map.portals.length; i++) {
+	if ((cell.cx +1) == map.portals[i].left[0] && cell.cy == map.portals[i].left[1]) {
+	    iPortal = i;
+	    return true;
+	}
+    }
+    return false;
 }

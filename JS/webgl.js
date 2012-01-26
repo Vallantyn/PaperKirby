@@ -7,31 +7,45 @@ var mvMatrixStack = [];
 var pMatrix = mat4.create();
 var tMatrix = mat4.create();
 
+
+
 var shaderProgram;
 
 var lastTime = 0;
+var unverse = 0;
 
 function webGLStart() {
-    var canvas = document.getElementById("canvas");
+    var WIDTH = document.body.offsetWidth;
+    var HEIGHT = document.body.offsetHeight;
+    var canvas = document.createElement("canvas");
+    canvas.id = "canvas";
+    canvas.setAttribute('width', WIDTH);
+    canvas.setAttribute('height', HEIGHT);
+    canvas.setAttribute('tabIndex', -1);
+    document.body.insertBefore(canvas, document.body.firstChild);
+    window.addEventListener("resize", OnWindowResize, false);
+
     initGL(canvas);
     initShaders();
     initKirby();
 
     map = new Map([
-  /*8*/  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-  /*7*/  [1,0,0,0,0,1,1,0,0,1,1,0,0,0,1],
-  /*6*/  [1,0,0,0,0,1,0,0,0,1,1,0,0,1,1],
-  /*5*/  [1,0,0,0,1,1,1,1,0,1,1,1,0,0,1],
-  /*4*/  [1,0,0,1,1,1,1,0,0,0,1,0,0,1,1],
-  /*3*/  [0,1,0,0,0,0,1,0,1,0,1,1,0,0,1],
-  /*2*/  [0,0,0,1,1,0,1,1,1,0,1,0,0,1,1],
-  /*1*/  [0,0,1,1,1,0,1,0,1,1,1,1,0,0,1],
-  /*0*/  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-]);
-/*	  0 1 2 3 4 5 6 7 8 9 1 1 1 1 1
- *			      0 1 2 3 4*/
+	/*8*/  [1,1,1,1,1,1,1,1,1,1],
+	/*7*/  [1,1,1,0,0,1,1,1,1,1],
+	/*6*/  [1,1,0,0,1,1,0,0,1,1],
+	/*5*/  [0,0,0,1,1,1,1,0,0,0],
+	/*4*/  [1,1,1,1,1,1,1,1,1,1],
+	//	/*3*/  [0,1,0,0,0,0,1,0,1,0,1,1,0,0,1],
+	//	/*2*/  [0,0,0,1,1,0,1,1,1,0,1,0,0,1,1],
+	//	/*1*/  [0,0,1,1,1,0,1,0,1,1,1,1,0,0,1],
+	//	/*0*/  [1,1,1,0,1,1,1,1,1,0,0,1,1,1,1],
+	//[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	]);
+    /*	        0 1 2 3 4 5 6 7 8 9 1 1 1 1 1
+     *		       	            0 1 2 3 4*/
 
     map.Init();
+    initMiniMap();
 
     document.addEventListener('keydown', keyDown, false);
     document.addEventListener('keyup', keyUp, false);
@@ -144,7 +158,8 @@ function drawScene() {
 
     mat4.identity(mvMatrix);
 
-    mat4.translate(mvMatrix, [0.0, 0.0, -10.0])
+    mat4.translate(mvMatrix, [0.0, 0.0, -10.0]);
+    mat4.rotate(mvMatrix, degToRad(unverse), [1,0,0]);
 
     gl.uniform1i(shaderProgram.useTexturesUniform, false);
     gl.uniform1i(shaderProgram.useLightingUniform, true);
@@ -161,6 +176,7 @@ function drawScene() {
     map.Draw();
     for (var i=0; i<map.portals.length; i++) map.portals[i].Draw();
     drawKirby();
+
 }
 
 function tick () {
@@ -170,6 +186,7 @@ function tick () {
     for (var i=0; i<map.portals.length; i++) map.portals[i].Anim();
     drawScene();
     moveKirby();
+    drawMiniMap();
 }
 
 function drawToMap() {
@@ -179,40 +196,61 @@ function drawToMap() {
 }
 
 function keyDown(e) {
-    if(e.keyCode == 39 || e.keyCode == 68) {
-	kirby.state.walk = true;
-	kirby.state.right = true;
-	kirby.state.left = false;
-	kirby.state.idle = false;
+    if (!map.unverse) {
+	if(e.keyCode == 39 || e.keyCode == 68) {
+	    kirby.state.walk = true;
+	    kirby.state.right = true;
+	    kirby.state.left = false;
+	    kirby.state.idle = false;
 
-    } else if(e.keyCode == 37 || e.keyCode == 81) {
-	kirby.state.walk = true;
-	kirby.state.right = false;
-	kirby.state.left = true;
-	kirby.state.idle = false;
+	} else if(e.keyCode == 37 || e.keyCode == 81) {
+	    kirby.state.walk = true;
+	    kirby.state.right = false;
+	    kirby.state.left = true;
+	    kirby.state.idle = false;
 
-    } else if(e.keyCode == 16) {
-	kirby.state.run = true;
+	} else if(e.keyCode == 16) {
+	    kirby.state.run = true;
 
-    } else if((e.keyCode == 32 || e.keyCode == 38 || e.keyCode == 90) && kirby.state.fall == false) {
-	kirby.state.jump = true;
+	} else if((e.keyCode == 32 || e.keyCode == 38 || e.keyCode == 90) && kirby.state.fall == false) {
+	    kirby.state.jump = true;
+	} else if (e.keyCode == 17) {
+	    map.unverse = true;
+	}
     }
 }
 
 function keyUp(e) {
-    if(e.keyCode == 39 || e.keyCode == 68) {
-	kirby.state.walk = false;
+    if (!map.unverse) {
+	if(e.keyCode == 39 || e.keyCode == 68) {
+	    kirby.state.walk = false;
 
-    } else if(e.keyCode == 37 || e.keyCode == 81) {
-	kirby.state.walk = false;
+	} else if(e.keyCode == 37 || e.keyCode == 81) {
+	    kirby.state.walk = false;
 
-    } else if(e.keyCode == 16) {
-	kirby.state.run = false;
+	} else if(e.keyCode == 16) {
+	    kirby.state.run = false;
 
-    } else if((e.keyCode == 32 || e.keyCode == 38 || e.keyCode == 90) && kirby.state.fall == false) {
-	kirby.state.jump = true;
+	} else if((e.keyCode == 32 || e.keyCode == 38 || e.keyCode == 90) && kirby.state.fall == false) {
+	    kirby.state.jump = true;
+	}
+
+	kirby.anim[id].i = 0;
+	kirby.anim[id].c = 0;
     }
+}
 
-    kirby.anim[id].i = 0;
-    kirby.anim[id].c = 0;
+function OnWindowResize(e) {
+    var bodyWidth = window.innerWidth;
+    var bodyHeight = window.innerHeight;
+
+    if (typeof e == 'undefined')
+	e = window.event;
+    //on resize reset the WIDTH, HEIGHT and canvas sizes
+    WIDTH = bodyWidth;
+    HEIGHT = bodyHeight;
+    document.getElementById('canvas').width = WIDTH;
+    document.getElementById('canvas').height = HEIGHT;
+    gl.viewportWidth = WIDTH;
+    gl.viewportHeight = HEIGHT;
 }

@@ -7,90 +7,54 @@ phy= {
 
 };
 
-function getCollisions() {
+prev = {
+    x: 0.0,
+    y: 0.0
+}
 
-    cell = {
-	cx: Math.floor((kirby.x+2)/4),
-	cy: Math.floor((kirby.y)/2)+1,
-    };
+var bBox;
 
-    up = false;
-    down = false;
-    left = false;
-    right = false;
+function boundingBox(a, b) {
+    x = kirby.x +a;
+    y = kirby.y +b;
 
-    cell.right = map.array[cell.cy][cell.cx+1];
-    cell.left = map.array[cell.cy][cell.cx-1];
-    cell.up = map.array[cell.cy+1][cell.cx];
-    cell.down = map.array[cell.cy-1][cell.cx];
-
-    cell.backLim = cell.cx*4 -1.6;
-    cell.frontLim = cell.cx*4 +1.6;
-    cell.upLim = (cell.cy-1)*2 +1.6;
-
-    if (map.array[cell.cy][cell.cx] == 1) {
-	if (kirby.x > cell.cx*4) {
-	    right = true;
-	}
-
-	if (kirby.x < cell.cx*4) {
-	    left = true;
-	}
-
-	if (kirby.y > (cell.cy-1)*2+1) {
-	    up = true;
-	}
-
-	if (kirby.y < (cell.cy-1)*2+1) {
-	    down = true;
-	}
-
-	if (up && !down && !left && !right) {
-	    kirby.y += 1;
-	} else if (!up && down && !left && !right) {
-	    kirby.y -= 1;
-	} else if (!up && !down && left && !right) {
-	    kirby.x -= 2;
-	} else if (!up && !down && !left && right) {
-	    kirby.x += 2;
-	}
+    bBox = [
+    {
+	x: x+0.35,
+	y: y+0.9,
+    },
+    {
+	x: x+0.35,
+	y: y,
+    },
+    {
+	x: x-0.35,
+	y: y+0.9,
+    },
+    {
+	x: x-0.35,
+	y: y,
     }
+    ];
 
-    if (cell.cx == 0 && kirby.x <= cell.backLim) kirby.x = cell.backLim;
-    if (cell.cx == map.array[cell.cy].length - 1 && kirby.x >= cell.frontLim) kirby.x = cell.frontLim;
-
-    phy.ground = (cell.cy*2 - 2)*cell.down;
-
-
-
-    if (!getPortal()) {
-
-	if (cell.right == 1 && kirby.x > cell.frontLim && kirby.y < cell.cy*2) kirby.x = cell.frontLim;
-
-	if (cell.left == 1 && kirby.x < cell.backLim && kirby.y < cell.cy*2) kirby.x = cell.backLim;
+    for (var i=0; i<bBox.length; i++) {
+	bBox[i].Y=Math.floor((bBox[i].y)/2+1);
+	bBox[i].X=Math.floor((bBox[i].x+2)/4);
     }
+}
 
-    if (cell.up == 1 && kirby.y > cell.upLim) {
-	kirby.y = cell.upLim;
-	kirby.state.jump = false;
-	kirby.state.fall = true;
-    }
+function getCollision(x, y) {
 
-    if(kirby.y > phy.ground && kirby.state.jump == false) {
-	if (kirby.state.fall == false) phy.speed = 0.0;
-	kirby.state.fall = true;
-	kirby.y -= phy.speed;
+    boundingBox(x, y);
 
-	if(phy.speed < phy.gravity) {
-	    phy.speed += phy.accel;
+    for (var i=0; i<bBox.length; i++) {
+//	var Y=Math.floor((bBox[i].y)/2+1);
+//	var X=Math.floor((bBox[i].x+2)/4);
+	if (map.array[bBox[i].Y][bBox[i].X] == 0) {
+	    bBox[i].pass = true;
 	} else {
-	    phy.speed = phy.gravity;
+	    bBox[i].pass = false;
 	}
     }
-
-    if(kirby.y <= phy.ground) {
-	kirby.state.fall = false;
-	kirby.y = phy.ground;
-	phy.speed = phy.gravity;
-    }
+    return bBox;
 }

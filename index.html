@@ -11,6 +11,41 @@
 	<script type="text/javascript" src="JS/Models/Kirby.js"></script>
 	<script type="text/javascript" src="JS/Colisions.js"></script>
         <script type="text/javascript" src="JS/Maths.js"></script>
+	<script type="text/javascript" src="JS/Powers.js"></script>
+	<script type="text/javascript" src="JS/miniMap.js"></script>
+
+	<style type="text/css">
+	    .touch {
+		height: 44px;
+		width: auto;
+	    }
+
+	    #canvas {
+		position: absolute;
+		z-index: -1;
+	    }
+
+	    #minicanvas {
+		position: absolute;
+		right: 10;
+		bottom: 10;
+	    }
+
+	    body {
+		font-family: 'Verdana';
+		color: #FFF;
+		font-size: 32;
+		text-align: center;
+	    }
+
+	    footer {
+		position: absolute;
+		text-align: left;
+		font-size: 18;
+		left: 10;
+		bottom: 10;
+	    }
+	</style>
 
 	<script id="shader-fs" type="x-shader/x-fragment">
 	    precision mediump float;
@@ -63,16 +98,25 @@
 
 	<script type="text/javascript" src="JS/webgl.js"></script>
     </head>
-    <body onload="webGLStart();" style="text-align: center; font-family: 'Verdana'; color: #333;">
+    <body onload="webGLStart();">
 	<header>
-	    <h1>Paper Kirby</h1>
+	    Paper Kirby
 	</header>
-
-	<canvas id="canvas" style="border: solid 5px; border-color: #708090; border-radius: 5px" width="1000" height="675">canvas</canvas>
-
-	<footer>
-	    <p>←/→ ou Q/D : Se déplacer || Maj : Courir || Espace/Z/↑ : Sauter</p>
-	    <p>&copy; Copyright  by J.Murtin</p>
+	<div>
+	    <canvas id="minicanvas"></canvas>
+	</div>
+	<footer style="">
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/arrow_keys/computer_key_Arrow_Left_T.png" alt="←">
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/arrow_keys/computer_key_Arrow_Right_T.png" alt="←">
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/letters/computer_key_Q_T.png" alt="Q">
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/letters/computer_key_D_T.png" alt="D"> : Se déplacer <br>
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/large_keys/computer_key_Shift_T.png" alt="Maj"> : Courir <br>
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/letters/computer_key_Z_T.png" alt="Z">
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/arrow_keys/computer_key_Arrow_Up_T.png" alt="↑"> : Sauter <br>
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/letters/computer_key_A_T.png" alt="A">
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/computer_key_Ctrl_T.png" alt="Ctrl"> : Changer de Pouvoir <br>
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/letters/computer_key_E_T.png" alt="E">
+	    <img class="touch" src="http://www.wpclipart.com/computer/keyboard_keys/smaller_keys/large_keys/computer_key_Space_bar_T.png" alt="Espace"> : Utiliser le Pouvoir
 	</footer>
     </body>
 </html>
