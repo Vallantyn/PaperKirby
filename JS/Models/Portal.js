@@ -35,15 +35,7 @@ function Portal(xR, yR, xL, yL) {
     this.blueTexture = gl.createTexture();
     this.orangeTexture = gl.createTexture();
 
-    this.anim = {
-	i: 0,
-	c: 0,
-
-	f: 6,
-	steps: 3,
-
-	r: 0
-    }
+    this.r = 0;
 
     this.Init = function() {
 
@@ -64,32 +56,7 @@ function Portal(xR, yR, xL, yL) {
     }
 
     this.Anim = function() {
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
-
-	this.textureCoords = [];
-
-	if (this.anim.c >= this.anim.steps && this.anim.i >= this.anim.f) {
-	    this.anim.i = 0;
-	    this.anim.c = 0;
-	} else if (this.anim.i >= this.anim.f && this.anim.c < this.anim.steps) {
-	    this.anim.i = 0;
-	    this.anim.c++;
-	}
-
-	xOri = 1.0 * this.anim.c;
-	xEnd = xOri + 1.0;
-
-	this.textureCoords = [
-	xOri, 0.0,
-	xEnd, 0.0,
-	xOri, 1.0,
-	xEnd, 1.0
-	];
-
-	this.anim.r += 1.5;
-	//portal.anim.i++;
-
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoords), gl.STATIC_DRAW);
+	this.r += 1.5;
     }
 
     this.DrawLeft = function(x, y) {
@@ -101,7 +68,7 @@ function Portal(xR, yR, xL, yL) {
 
 	mat4.translate(mvMatrix, [0.0, y*2-1.0, -x*4-2.01]);
 	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
-	mat4.rotate(mvMatrix, degToRad(this.anim.r), [1.0, 0.0, 0.0])
+	mat4.rotate(mvMatrix, degToRad(this.r), [1.0, 0.0, 0.0])
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, this.blueTexture);
@@ -129,7 +96,7 @@ function Portal(xR, yR, xL, yL) {
 
 	mat4.translate(mvMatrix, [0.0, y*2-1, -x*4+2.01]);
 	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
-	mat4.rotate(mvMatrix, degToRad(-this.anim.r), [1.0, 0.0, 0.0])
+	mat4.rotate(mvMatrix, degToRad(-this.r), [1.0, 0.0, 0.0])
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, this.orangeTexture);
@@ -210,15 +177,7 @@ function Exit(x, y, dir, next) {
 
     this.texture = gl.createTexture();
 
-    this.anim = {
-	i: 0,
-	c: 0,
-
-	f: 6,
-	steps: 3,
-
-	r: 0
-    }
+    this.r = 0;
 
     this.Init = function() {
 
@@ -232,31 +191,7 @@ function Exit(x, y, dir, next) {
     }
 
     this.Anim = function() {
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
-
-	this.textureCoords = [];
-
-	if (this.anim.c >= this.anim.steps && this.anim.i >= this.anim.f) {
-	    this.anim.i = 0;
-	    this.anim.c = 0;
-	} else if (this.anim.i >= this.anim.f && this.anim.c < this.anim.steps) {
-	    this.anim.i = 0;
-	    this.anim.c++;
-	}
-
-	xOri = 1.0 * this.anim.c;
-	xEnd = xOri + 1.0;
-
-	this.textureCoords = [
-	xOri, 0.0,
-	xEnd, 0.0,
-	xOri, 1.0,
-	xEnd, 1.0
-	];
-
-	this.anim.r += 1.5;
-
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoords), gl.STATIC_DRAW);
+	this.r += 1.5;
     }
 
     this.Draw = function() {
@@ -268,7 +203,7 @@ function Exit(x, y, dir, next) {
 
 	mat4.translate(mvMatrix, [0.0, this.y*2-1.0, -(this.x*4+2.01*this.dir)]);
 	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
-	mat4.rotate(mvMatrix, degToRad(this.anim.r), [1.0, 0.0, 0.0])
+	mat4.rotate(mvMatrix, degToRad(this.r), [1.0, 0.0, 0.0])
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, this.texture);
