@@ -252,9 +252,9 @@ function moveKirby() {
 		kirby.x += 0.05*kirby.fDir;
 		phy.gravity = 0.2;
 		checkFall();
-	    } else if (portalLeft()) {
+	    } else if (portalLeft() || getExit()) {
 		kirby.x += 0.05*kirby.fDir;
-//		console.log('portal ' + iPortal + ' passed')
+	    //		console.log('portal ' + iPortal + ' passed')
 	    } else if (cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
 		kirby.x = map.portals[iPortal].right[0]*4 +1.64;
 		kirby.y = (map.portals[iPortal].right[1]-1)*2;
@@ -269,9 +269,9 @@ function moveKirby() {
 		kirby.x -= 0.05*kirby.fDir;
 		phy.gravity = 0.2;
 		checkFall();
-	    } else if (portalRight()) {
+	    } else if (portalRight() || getExit()) {
 		kirby.x -= 0.05*kirby.fDir;
-//		console.log('portal ' + iPortal + ' passed')
+	    //		console.log('portal ' + iPortal + ' passed')
 	    } else if (cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
 		kirby.x = map.portals[iPortal].left[0]*4 -1.64;
 		kirby.y = (map.portals[iPortal].left[1]-1)*2;
@@ -287,9 +287,9 @@ function moveKirby() {
 		kirby.x += 0.1*kirby.fDir;
 		phy.gravity = 0.2;
 
-	    } else if (portalLeft()) {
+	    } else if (portalLeft() || getExit()) {
 		kirby.x += 0.1*kirby.fDir;
-//		console.log('portal ' + iPortal + ' passed')
+	    //		console.log('portal ' + iPortal + ' passed')
 	    } else if (cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
 		kirby.x = map.portals[iPortal].right[0]*4 +1.64;
 		kirby.y = (map.portals[iPortal].right[1]-1)*2;
@@ -304,9 +304,9 @@ function moveKirby() {
 		kirby.x -= 0.1*kirby.fDir;
 		phy.gravity = 0.2;
 
-	    } else if (portalRight()) {
+	    } else if (portalRight() || getExit()) {
 		kirby.x -= 0.1*kirby.fDir;
-//		console.log('portal ' + iPortal + ' passed')
+	    //		console.log('portal ' + iPortal + ' passed')
 	    } else if (cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
 		kirby.x = map.portals[iPortal].left[0]*4 -1.64;
 		kirby.y = (map.portals[iPortal].left[1]-1)*2;
@@ -320,6 +320,11 @@ function moveKirby() {
 
 	if	(kirby.state.fall == true && kirby.state.jump == false) {
 	    id = 'fall';
+	}
+
+	if (cell.cx == levels[level].end[0] && cell.cy == levels[level].end[1]) {
+	    var n = levels[level].next;
+	    changeLevel(n);
 	}
     }
 }

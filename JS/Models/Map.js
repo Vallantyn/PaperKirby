@@ -71,13 +71,13 @@ function Map(a) {
 
 	this.portals = new Array();
 
-	//map.portals[0] = new Portal(5,1,0,3);
-	this.portals.push(new Portal(4,1,1,3));
-	this.portals.push(new Portal(5,6,5,6));
-	this.portals.push(new Portal(8,2,8,1));
-	this.portals.push(new Portal(6,1,14,1));
-	this.portals.push(new Portal(6,3,8,3));
+	for (var i = 0; i<levels[level].portals.length; i++) {
+	    this.portals.push(new Portal(levels[level].portals[i][0][0], levels[level].portals[i][0][1], levels[level].portals[i][1][0], levels[level].portals[i][1][1]))
+	}
 	for (var i=0; i<this.portals.length; i++) this.portals[i].Init();
+
+	this.exit = new Exit(levels[level].end[0], levels[level].end[1],levels[level].dir ,levels[level].next);
+	this.exit.Init();
     }
 
     this.Draw = function() {

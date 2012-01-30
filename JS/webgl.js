@@ -7,7 +7,7 @@ var mvMatrixStack = [];
 var pMatrix = mat4.create();
 var tMatrix = mat4.create();
 
-
+var level = 'level01';
 
 var shaderProgram;
 
@@ -29,18 +29,7 @@ function webGLStart() {
     initShaders();
     initKirby();
 
-    map = new Map([
-	/*8*/  [1,1,1,1,1,1,1,1,1,1],
-	/*7*/  [1,1,1,0,0,1,1,1,1,1],
-	/*6*/  [1,1,0,0,1,1,0,0,1,1],
-	/*5*/  [0,0,0,1,1,1,1,0,0,0],
-	/*4*/  [1,1,1,1,1,1,1,1,1,1],
-	//	/*3*/  [0,1,0,0,0,0,1,0,1,0,1,1,0,0,1],
-	//	/*2*/  [0,0,0,1,1,0,1,1,1,0,1,0,0,1,1],
-	//	/*1*/  [0,0,1,1,1,0,1,0,1,1,1,1,0,0,1],
-	//	/*0*/  [1,1,1,0,1,1,1,1,1,0,0,1,1,1,1],
-	//[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-	]);
+    map = new Map(levels[level].array);
     /*	        0 1 2 3 4 5 6 7 8 9 1 1 1 1 1
      *		       	            0 1 2 3 4*/
 
@@ -52,6 +41,9 @@ function webGLStart() {
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
+
+    kirby.x = levels[level].start[0]*4;
+    kirby.y = levels[level].start[1]*2;
 
     tick();
 }
@@ -175,6 +167,7 @@ function drawScene() {
 
     map.Draw();
     for (var i=0; i<map.portals.length; i++) map.portals[i].Draw();
+    map.exit.Draw();
     drawKirby();
 
 }
@@ -184,6 +177,7 @@ function tick () {
 
     animKirby();
     for (var i=0; i<map.portals.length; i++) map.portals[i].Anim();
+    map.exit.Anim();
     drawScene();
     moveKirby();
     drawMiniMap();
