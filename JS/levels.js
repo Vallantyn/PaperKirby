@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+var bak;
 
-var levels = {
-    level01: {
+function Level() {
+    this.level01 = {
 	array: [
 	    [0,0,0,0,0,0,0,0,0,0,0,1,1,1,1],
 	    [0,0,1,1,1,1,1,1,1,1,1,1,0,0,1],
@@ -32,9 +33,9 @@ var levels = {
 	dir: -1,
 
 	next: 'level02',
-    },
+    };
 
-    level02: {
+    this.level02 = {
 	array: [
 	    [1,1,1,1,0,1,1,1,1,1,1,1,1,0,0],
 	    [1,0,0,1,1,1,0,1,0,0,0,0,1,1,0],
@@ -44,7 +45,8 @@ var levels = {
 	],
 
 	portals: [
-	    [[4, 2], [10, 2]]
+	    [[4, 2], [10, 2]],
+	    [[10, 2], [4, 2]]
 	],
 
 	start: [1,3],
@@ -54,9 +56,9 @@ var levels = {
 	dir: -1,
 
 	next: 'level03',
-    },
+    };
 
-    level03: {
+    this.level03 = {
 	array: [
 	    [1,1,1,1,1],
 	    [1,0,1,0,1],
@@ -74,14 +76,15 @@ var levels = {
 	dir: -1,
 
 	next: 'level01',
-    },
+    };
 }
 
-    function changeLevel(a) {
-	var k = levels[a].array;
-	map = new Map(k);
-	level = a;
-	kirby.x = levels[level].start[0]*4;
-	kirby.y = (levels[level].start[1]-1)*2;
-	map.Init();
-    }
+function changeLevel(a) {
+    lvl = new Level();
+    var k = lvl[a].array;
+    cLvl = a;
+    map = new Map(k);
+    map.Init();
+    kirby.x = lvl[cLvl].start[0]*4 -1.64;
+    kirby.y = (lvl[cLvl].start[1]-1)*2;
+}

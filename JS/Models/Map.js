@@ -28,9 +28,9 @@ function Map(a) {
     this.items = 0;
 
     for (var y=0; y < this.array.length; y++) {
-	for (var z=0; z < this.array[y].length; z++) {
-	    if (this.array[y][z] == 1) {
-		var block = new Block(z, y, this.iid);
+	for (var x=0; x < this.array[y].length; x++) {
+	    if (this.array[y][x] == 1) {
+		var block = new Block(x, y, this.iid);
 
 		this.vertices = this.vertices.concat(block.vertices);
 		this.textureCoords = this.textureCoords.concat(block.texture);
@@ -71,12 +71,12 @@ function Map(a) {
 
 	this.portals = new Array();
 
-	for (var i = 0; i<levels[level].portals.length; i++) {
-	    this.portals.push(new Portal(levels[level].portals[i][0][0], levels[level].portals[i][0][1], levels[level].portals[i][1][0], levels[level].portals[i][1][1]))
+	for (var i = 0; i<lvl[cLvl].portals.length; i++) {
+	    this.portals.push(new Portal(lvl[cLvl].portals[i][0][0], lvl[cLvl].portals[i][0][1], lvl[cLvl].portals[i][1][0], lvl[cLvl].portals[i][1][1]))
 	}
 	for (var i=0; i<this.portals.length; i++) this.portals[i].Init();
 
-	this.exit = new Exit(levels[level].end[0], levels[level].end[1],levels[level].dir ,levels[level].next);
+	this.exit = new Exit(lvl[cLvl].end[0], lvl[cLvl].end[1],lvl[cLvl].dir ,lvl[cLvl].next);
 	this.exit.Init();
     }
 
@@ -106,49 +106,49 @@ function Map(a) {
     }
 }
 
-function Block(z, y, id) {
-    this.zmin = -z*4.0-2.0;
-    this.zmax = -z*4.0+2.0;
+function Block(x, y, id) {
+    this.xmin = x*4.0-2.0;
+    this.xmax = x*4.0+2.0;
 
     this.ymax = y*2.0;
     this.ymin = y*2.0 - 2.0;
 
     this.vertices = [
     // Top
-    2.0, this.ymax, this.zmax,
-    2.0, this.ymax, this.zmin,
-    -2.0, this.ymax, this.zmax,
-    -2.0, this.ymax, this.zmin,
+    this.xmax, this.ymax, 2.0,
+    this.xmin, this.ymax, 2.0,
+    this.xmax, this.ymax, -2.0,
+    this.xmin, this.ymax, -2.0,
 
     // Bottom
-    2.0, this.ymin,  this.zmax,
-    2.0, this.ymin, this.zmin,
-    -2.0, this.ymin,  this.zmax,
-    -2.0, this.ymin, this.zmin,
+    this.xmax, this.ymin, 2.0,
+    this.xmin, this.ymin, 2.0,
+    this.xmax, this.ymin, -2.0,
+    this.xmin, this.ymin, -2.0,
 
     // Face
-    2.0,  this.ymax,  this.zmax,
-    2.0, this.ymin,  this.zmax,
-    2.0,  this.ymax, this.zmin,
-    2.0, this.ymin, this.zmin,
+    this.xmax,  this.ymax,  2.0,
+    this.xmax, this.ymin,  2.0,
+    this.xmin,  this.ymax, 2.0,
+    this.xmin, this.ymin, 2.0,
 
     // Back
-    -2.0,  this.ymax,  this.zmax,
-    -2.0, this.ymin,  this.zmax,
-    -2.0,  this.ymax, this.zmin,
-    -2.0, this.ymin, this.zmin,
+    this.xmax,  this.ymax,  -2.0,
+    this.xmax, this.ymin,  -2.0,
+    this.xmin,  this.ymax, -2.0,
+    this.xmin, this.ymin, -2.0,
 
     // Left
-    2.0,  this.ymax, this.zmax,
-    -2.0,  this.ymax, this.zmax,
-    2.0, this.ymin, this.zmax,
-    -2.0, this.ymin, this.zmax,
+    this.xmax,  this.ymax, 2.0,
+    this.xmax,  this.ymax, -2.0,
+    this.xmax, this.ymin, 2.0,
+    this.xmax, this.ymin, -2.0,
 
     // Right
-    2.0,  this.ymax, this.zmin,
-    -2.0,  this.ymax, this.zmin,
-    2.0, this.ymin, this.zmin,
-    -2.0, this.ymin, this.zmin,
+    this.xmin,  this.ymax, 2.0,
+    this.xmin,  this.ymax, -2.0,
+    this.xmin, this.ymin, 2.0,
+    this.xmin, this.ymin, -2.0,
 
     ]
     this.verticesItems = 24;
@@ -227,28 +227,28 @@ function Block(z, y, id) {
     0.0, -1.0, 0.0,
 
     // Face
-    1.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
 
     // Back
-    -1.0, 0.0, 0.0,
-    -1.0, 0.0, 0.0,
-    -1.0, 0.0, 0.0,
-    -1.0, 0.0, 0.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
 
     // Left
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
 
     // Right
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
     ]
     this.normalsItems = 24;
 }

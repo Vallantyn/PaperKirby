@@ -66,8 +66,7 @@ function Portal(xR, yR, xL, yL) {
 
 	gl.uniform1i(shaderProgram.useLightingUniform, false);
 
-	mat4.translate(mvMatrix, [0.0, y*2-1.0, -x*4-2.01]);
-	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
+	mat4.translate(mvMatrix, [x*4+2.01, y*2-1.0, 0.0]);
 	mat4.rotate(mvMatrix, degToRad(this.r), [1.0, 0.0, 0.0])
 
 	gl.activeTexture(gl.TEXTURE0);
@@ -84,6 +83,9 @@ function Portal(xR, yR, xL, yL) {
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertexBuffer.numItems);
 
 	gl.uniform1i(shaderProgram.useLightingUniform, true);
+
+
+
 	mvPopMatrix();
     }
 
@@ -94,8 +96,7 @@ function Portal(xR, yR, xL, yL) {
 
 	gl.uniform1i(shaderProgram.useLightingUniform, false);
 
-	mat4.translate(mvMatrix, [0.0, y*2-1, -x*4+2.01]);
-	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
+	mat4.translate(mvMatrix, [x*4-2.01, y*2-1, 0.0]);
 	mat4.rotate(mvMatrix, degToRad(-this.r), [1.0, 0.0, 0.0])
 
 	gl.activeTexture(gl.TEXTURE0);
@@ -128,6 +129,7 @@ function portalRight() {
 	    return true;
 	}
     }
+    //    iPortal = 0;
     return false;
 }
 
@@ -138,6 +140,7 @@ function portalLeft() {
 	    return true;
 	}
     }
+    //    iPortal = 0;
     return false;
 }
 
@@ -201,8 +204,7 @@ function Exit(x, y, dir, next) {
 
 	gl.uniform1i(shaderProgram.useLightingUniform, false);
 
-	mat4.translate(mvMatrix, [0.0, this.y*2-1.0, -(this.x*4+2.01*this.dir)]);
-	mat4.rotate(mvMatrix, degToRad(90), [0.0, 1.0, 0.0])
+	mat4.translate(mvMatrix, [this.x*4+2.01*this.dir, this.y*2-1.0, 0.0]);
 	mat4.rotate(mvMatrix, degToRad(this.r), [1.0, 0.0, 0.0])
 
 	gl.activeTexture(gl.TEXTURE0);

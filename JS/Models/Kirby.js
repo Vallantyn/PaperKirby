@@ -256,7 +256,7 @@ function moveKirby() {
 		kirby.x += 0.05*kirby.fDir;
 	    //		console.log('portal ' + iPortal + ' passed')
 	    } else if (cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
-		kirby.x = map.portals[iPortal].right[0]*4 +1.64;
+		kirby.x = (map.portals[iPortal].right[0]+0.5)*4 +0.1;
 		kirby.y = (map.portals[iPortal].right[1]-1)*2;
 	    } else {
 		kirby.x = cell.cx*4 +1.64;
@@ -273,7 +273,7 @@ function moveKirby() {
 		kirby.x -= 0.05*kirby.fDir;
 	    //		console.log('portal ' + iPortal + ' passed')
 	    } else if (cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
-		kirby.x = map.portals[iPortal].left[0]*4 -1.64;
+		kirby.x = (map.portals[iPortal].left[0]-0.5)*4 -0.1;
 		kirby.y = (map.portals[iPortal].left[1]-1)*2;
 	    } else {
 		kirby.x = cell.cx*4 -1.64;
@@ -291,7 +291,7 @@ function moveKirby() {
 		kirby.x += 0.1*kirby.fDir;
 	    //		console.log('portal ' + iPortal + ' passed')
 	    } else if (cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
-		kirby.x = map.portals[iPortal].right[0]*4 +1.64;
+		kirby.x = (map.portals[iPortal].right[0]+0.5)*4 +0.1;
 		kirby.y = (map.portals[iPortal].right[1]-1)*2;
 	    } else {
 		kirby.x = cell.cx*4 +1.64;
@@ -308,7 +308,7 @@ function moveKirby() {
 		kirby.x -= 0.1*kirby.fDir;
 	    //		console.log('portal ' + iPortal + ' passed')
 	    } else if (cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
-		kirby.x = map.portals[iPortal].left[0]*4 -1.64;
+		kirby.x = map.portals[iPortal].left[0]*4 -2.1;
 		kirby.y = (map.portals[iPortal].left[1]-1)*2;
 	    } else {
 		kirby.x = cell.cx*4 -1.64;
@@ -322,8 +322,8 @@ function moveKirby() {
 	    id = 'fall';
 	}
 
-	if (cell.cx == levels[level].end[0] && cell.cy == levels[level].end[1]) {
-	    var n = levels[level].next;
+	if (cell.cx == lvl[cLvl].end[0] && cell.cy == lvl[cLvl].end[1]) {
+	    var n = lvl[cLvl].next;
 	    changeLevel(n);
 	}
     }
@@ -363,5 +363,6 @@ function drawKirby() {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, kirby.vertexPosBuffer.numItems);
 
     gl.uniform1i(shaderProgram.useLightingUniform, true);
+
     mvPopMatrix();
 }

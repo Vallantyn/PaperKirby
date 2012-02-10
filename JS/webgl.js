@@ -7,7 +7,7 @@ var mvMatrixStack = [];
 var pMatrix = mat4.create();
 var tMatrix = mat4.create();
 
-var level = 'level01';
+var cLvl;
 
 var shaderProgram;
 
@@ -29,9 +29,10 @@ function webGLStart() {
     initShaders();
     initKirby();
 
-    map = new Map(levels[level].array);
-    /*	        0 1 2 3 4 5 6 7 8 9 1 1 1 1 1
-     *		       	            0 1 2 3 4*/
+    lvl = new Level();
+    cLvl = 'level01';
+    bak = lvl[cLvl];
+    map = new Map(lvl[cLvl].array);
 
     map.Init();
     initMiniMap();
@@ -42,8 +43,8 @@ function webGLStart() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
 
-    kirby.x = levels[level].start[0]*4;
-    kirby.y = levels[level].start[1]*2;
+    kirby.x = lvl[cLvl].start[0]*4;
+    kirby.y = lvl[cLvl].start[1]*2;
 
     tick();
 }
@@ -91,8 +92,8 @@ function initShaders() {
     shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
     shaderProgram.useTexturesUniform = gl.getUniformLocation(shaderProgram, "uUseTextures")
     shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
-    shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
-    shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+    shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
+    shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
 //shaderProgram.alphaUniform = gl.getUniformLocation(shaderProgram, "uAlpha");
 }
 
@@ -148,22 +149,16 @@ function drawScene() {
 
     mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
+    gl.uniform1i(shaderProgram.useTexturesUniform, false);
+    gl.uniform1i(shaderProgram.useLightingUniform, true);
+    gl.uniform3f(shaderProgram.ambientColorUniform, 0.3, 0.3, 0.3);
+    gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0.0, 0.5, -10.0);
+    gl.uniform3f(shaderProgram.pointLightingColorUniform, 0.7, 0.7, 0.7);
+
     mat4.identity(mvMatrix);
 
     mat4.translate(mvMatrix, [0.0, 0.0, -10.0]);
     mat4.rotate(mvMatrix, degToRad(unverse), [1,0,0]);
-
-    gl.uniform1i(shaderProgram.useTexturesUniform, false);
-    gl.uniform1i(shaderProgram.useLightingUniform, true);
-    gl.uniform3f(shaderProgram.ambientColorUniform, 0.5, 0.5, 0.5);
-    var lightingDirection = [-0.5, -1, 0.0];
-    var adjustedLD = vec3.create();
-    vec3.normalize(lightingDirection, adjustedLD);
-    vec3.scale(adjustedLD, -1);
-    gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
-    gl.uniform3f(shaderProgram.directionalColorUniform, 1, 1, 1);
-
-
 
     map.Draw();
     for (var i=0; i<map.portals.length; i++) map.portals[i].Draw();
@@ -184,9 +179,8 @@ function tick () {
 }
 
 function drawToMap() {
-    mat4.rotate(mvMatrix, degToRad(10), [1, 0,0]);
-    mat4.rotate(mvMatrix, degToRad(-90), [0,1,0]);
-    mat4.translate(mvMatrix, [0.0, -kirby.y, kirby.x])
+    mat4.rotate(mvMatrix, degToRad(10), [1, 0, 0]);
+    mat4.translate(mvMatrix, [-kirby.x, -kirby.y, 0.0])
 }
 
 function keyDown(e) {
