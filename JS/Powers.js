@@ -1,4 +1,4 @@
-function Unverse() {
+function Unverse() { // Inverse gravity
     unverse++;
     if (unverse == 180) {
 	Y = cell.cy;
@@ -21,11 +21,11 @@ function Unverse() {
     }
 }
 
-function unStuck() {
+function unStuck() { // reset char pos to start of the level (reload the map in fact...)
     changeLevel(lvl);
 }
 
-function split() {
+function split() { //split the map in twice parts
     var _tempMap = map.array;
     
     for (var i=0; i<_tempMap.length; i++) {
@@ -37,4 +37,12 @@ function split() {
     map = new Map(_tempMap.reverse());
     map.Init();
     kirby.x = (map.array[0].length -1)*4;
+}
+
+function unDo() { //reverse the last power
+    // do nothing right now
+}
+
+function swap() { // echange two part of the map (double split...)
+    // do nothing right now too...
 }
