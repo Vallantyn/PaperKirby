@@ -85,9 +85,10 @@ function initShaders() {
     shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
     gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 
-    shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
-    shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-    shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
+    shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");    // Projection Matrix
+    shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");  // Model/View matrix
+    shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");    // Normal Matrix
+    
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
     shaderProgram.useTexturesUniform = gl.getUniformLocation(shaderProgram, "uUseTextures")
