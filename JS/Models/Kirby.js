@@ -22,6 +22,15 @@ var kirby = {
 	left: true,
 	right: false
     },
+    
+    power : {
+      active: false,
+      inverse: false,
+      split: false,
+      swap: false,
+      reset: false,
+      undo: false
+    },
 
     anim: {
 	width: 16,
@@ -182,10 +191,10 @@ function animKirby() {
 function moveKirby() {
     cell = {
 	cx: Math.floor((kirby.x+2)/4),
-	cy: Math.floor((kirby.y+0.5)/2+1),
+	cy: Math.floor((kirby.y+0.5)/2+1)
     };
 
-    if (map.unverse) {
+    if (kirby.power.inverse) {
 	Unverse();
     } else {
 

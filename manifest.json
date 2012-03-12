@@ -1,0 +1,26 @@
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+{
+  "name": "UnMazed",
+  "description": "Platform Game in WebGl when you must reshape the level to get trought the exit.",
+  "version": "0.0.0.1",
+  "icons": {
+    "128": "icon.png",
+    "16": "icon16.png",
+    "24": "icon24.png",
+    "32": "icon32.png",
+    "64": "icon64.png",
+    "48": "icon48.png"
+  },
+  "app": {
+    "urls": [
+      "http://vallantyn.github.com/pk/"
+    ],
+    "launch": {
+      "web_url": "http://vallantyn.github.com/pk/"
+    }
+  }
+}

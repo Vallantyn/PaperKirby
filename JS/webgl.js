@@ -146,7 +146,7 @@ function drawScene() {
     gl.viewport(0,0,gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.enable(gl.BLEND);
+    
 
     mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
@@ -162,9 +162,11 @@ function drawScene() {
     mat4.rotate(mvMatrix, degToRad(unverse), [1,0,0]);
 
     map.Draw();
+    gl.enable(gl.BLEND);
     for (var i=0; i<map.portals.length; i++) map.portals[i].Draw();
     map.exit.Draw();
     drawKirby();
+    gl.disable(gl.BLEND);
 
 }
 
@@ -185,31 +187,55 @@ function drawToMap() {
 }
 
 function keyDown(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.returnValue = false;
+    
     if (!map.unverse) {
 	if(e.keyCode == 39 || e.keyCode == 68) {
-	    kirby.state.walk = true;
-	    kirby.state.right = true;
-	    kirby.state.left = false;
-	    kirby.state.idle = false;
+	    if (!kirby.power.active) {
+                kirby.state.walk = true;
+                kirby.state.right = true;
+                kirby.state.left = false;
+                kirby.state.idle = false;
+            } else {
+                kirby.power.split = true;
+                split();
+            }
 
 	} else if(e.keyCode == 37 || e.keyCode == 81) {
-	    kirby.state.walk = true;
-	    kirby.state.right = false;
-	    kirby.state.left = true;
-	    kirby.state.idle = false;
+	    if (!kirby.power.active) {
+                kirby.state.walk = true;
+                kirby.state.right = false;
+                kirby.state.left = true;
+                kirby.state.idle = false;
+            } else {
+                kirby.power.split = true;
+                split();
+            }
 
 	} else if(e.keyCode == 16) {
 	    kirby.state.run = true;
 
 	} else if((e.keyCode == 32 || e.keyCode == 38 || e.keyCode == 90) && kirby.state.fall == false) {
 	    kirby.state.jump = true;
-	} else if (e.keyCode == 17) {
-	    map.unverse = true;
+        
+        } else if (e.keyCode == 40 && kirby.power.active) {
+	    kirby.power.inverse = true;
+	
+        } else if (e.keyCode == 17 || e.keyCode == 83) {
+	    kirby.power.active = true;
 	}
     }
 }
 
 function keyUp(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.returnValue = false;
+    
     if (!map.unverse) {
 	if(e.keyCode == 39 || e.keyCode == 68) {
 	    kirby.state.walk = false;
@@ -222,6 +248,8 @@ function keyUp(e) {
 
 	} else if((e.keyCode == 32 || e.keyCode == 38 || e.keyCode == 90) && kirby.state.fall == false) {
 	    kirby.state.jump = true;
+	} else if (e.keyCode == 17) {
+	    kirby.power.active = false;
 	}
 
 	kirby.anim[id].i = 0;
