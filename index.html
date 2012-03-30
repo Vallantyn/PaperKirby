@@ -20,6 +20,22 @@
 		height: 44px;
 		width: auto;
 	    }
+            
+            .info {
+                height: 44px;
+                width: 44px;
+                
+                position: absolute;
+                left: 10;
+                top: 10;
+                
+                text-align: center;
+                color: black;
+                background: white;
+                opacity: 0.4;
+                
+                border-radius: 10px;
+            }
 
 	    #canvas {
 		position: absolute;
@@ -106,6 +122,13 @@
     </head>
     <body onload="webGLStart();">
 	<header>
+            <div id="infoIcon" class="info">
+                i
+            </div>
+            <div id="infoPanel" class="info" hidden="true">
+                blah
+            </div>
+            
 	    Paper Kirby
 	</header>
 	<div>
