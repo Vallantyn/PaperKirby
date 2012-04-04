@@ -261,10 +261,10 @@ function moveKirby() {
 		kirby.x += 0.05*kirby.fDir;
 		phy.gravity = 0.2;
 		checkFall();
-	    } else if (portalLeft() || getExit()) {
+	    } else if ((map.portals && portalLeft()) || getExit()) {
 		kirby.x += 0.05*kirby.fDir;
 	    //		console.log('portal ' + iPortal + ' passed')
-	    } else if (cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
+	    } else if (map.portals && cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
 		kirby.x = (map.portals[iPortal].right[0]+0.5)*4 +0.1;
 		kirby.y = (map.portals[iPortal].right[1]-1)*2;
 	    } else {
@@ -278,10 +278,10 @@ function moveKirby() {
 		kirby.x -= 0.05*kirby.fDir;
 		phy.gravity = 0.2;
 		checkFall();
-	    } else if (portalRight() || getExit()) {
+	    } else if ((map.portals && portalRight()) || getExit()) {
 		kirby.x -= 0.05*kirby.fDir;
 	    //		console.log('portal ' + iPortal + ' passed')
-	    } else if (cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
+	    } else if (map.portals && cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
 		kirby.x = (map.portals[iPortal].left[0]-0.5)*4 -0.1;
 		kirby.y = (map.portals[iPortal].left[1]-1)*2;
 	    } else {
@@ -296,10 +296,10 @@ function moveKirby() {
 		kirby.x += 0.1*kirby.fDir;
 		phy.gravity = 0.2;
 
-	    } else if (portalLeft() || getExit()) {
+	    } else if ((map.portals && portalLeft()) || getExit()) {
 		kirby.x += 0.1*kirby.fDir;
 	    //		console.log('portal ' + iPortal + ' passed')
-	    } else if (cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
+	    } else if (map.portals && cell.cx == map.portals[iPortal].left[0] && cell.cy == map.portals[iPortal].left[1]) {
 		kirby.x = (map.portals[iPortal].right[0]+0.5)*4 +0.1;
 		kirby.y = (map.portals[iPortal].right[1]-1)*2;
 	    } else {
@@ -313,10 +313,10 @@ function moveKirby() {
 		kirby.x -= 0.1*kirby.fDir;
 		phy.gravity = 0.2;
 
-	    } else if (portalRight() || getExit()) {
+	    } else if ((map.portals && portalRight()) || getExit()) {
 		kirby.x -= 0.1*kirby.fDir;
 	    //		console.log('portal ' + iPortal + ' passed')
-	    } else if (cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
+	    } else if (map.portals && cell.cx == map.portals[iPortal].right[0] && cell.cy == map.portals[iPortal].right[1]) {
 		kirby.x = map.portals[iPortal].left[0]*4 -2.1;
 		kirby.y = (map.portals[iPortal].left[1]-1)*2;
 	    } else {
@@ -327,7 +327,7 @@ function moveKirby() {
 
 	checkFall();
 
-	if	(kirby.state.fall == true && kirby.state.jump == false) {
+	if (kirby.state.fall == true && kirby.state.jump == false) {
 	    id = 'fall';
 	}
 
@@ -335,6 +335,10 @@ function moveKirby() {
 	    var n = lvl[cLvl].next;
 	    changeLevel(n);
 	}
+        
+        if (kirby.y < -1.5) {
+            unStuck();            
+        }
     }
 }
 

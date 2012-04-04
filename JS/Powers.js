@@ -2,13 +2,15 @@ function Unverse() { // Invert gravity
     unverse++;
     if (unverse == 180) {
 	Y = cell.cy;
-	for (var i = 0; i<lvl[cLvl].portals.length; i++) {
-	    var yA = lvl[cLvl].portals[i][0][1];
-	    var yB = lvl[cLvl].portals[i][1][1];
-	    lvl[cLvl].portals[i][0][1] = map.array.length - 1 - yA;
-	    lvl[cLvl].portals[i][1][1] = map.array.length - 1 - yB;
-	}
-	var yC = lvl[cLvl].end[1];
+        if (lvl[cLvl].portals) {
+            for (var i = 0; i<lvl[cLvl].portals.length; i++) {
+                var yA = lvl[cLvl].portals[i][0][1];
+                var yB = lvl[cLvl].portals[i][1][1];
+                lvl[cLvl].portals[i][0][1] = map.array.length - 1 - yA;
+                lvl[cLvl].portals[i][1][1] = map.array.length - 1 - yB;
+            }
+        }
+        var yC = lvl[cLvl].end[1];
 	lvl[cLvl].end[1] = map.array.length - 1 - yC;
 
 	map = new Map(map.array);
@@ -22,7 +24,7 @@ function Unverse() { // Invert gravity
 }
 
 function unStuck() { // reset char pos to start of the level (reload the map in fact...)
-    changeLevel(lvl);
+    changeLevel(cLvl);
 }
 
 function split() { //split the map in twice parts
@@ -39,17 +41,19 @@ function split() { //split the map in twice parts
                     _tempMap[i] = _tempMap[i].concat(newLine);
                 }
 
-                for (var i = 0; i<lvl[cLvl].portals.length; i++) {
-                    var xA = lvl[cLvl].portals[i][0][0];
-                    var xB = lvl[cLvl].portals[i][1][0];
+                if (lvl[cLvl].portals) { 
+                    for (var i = 0; i<lvl[cLvl].portals.length; i++) {
+                        var xA = lvl[cLvl].portals[i][0][0];
+                        var xB = lvl[cLvl].portals[i][1][0];
 
-                    lvl[cLvl].portals[i][0][0] = xA - cell.cx;
-                    lvl[cLvl].portals[i][1][0] = xB - cell.cx;
+                        lvl[cLvl].portals[i][0][0] = xA - cell.cx;
+                        lvl[cLvl].portals[i][1][0] = xB - cell.cx;
 
-                    if (lvl[cLvl].portals[i][0][0] < 0) { lvl[cLvl].portals[i][0][0] += lvl[cLvl].array[0].length };
-                    if (lvl[cLvl].portals[i][1][0] < 0) { lvl[cLvl].portals[i][1][0] += lvl[cLvl].array[0].length };
-                    if (lvl[cLvl].portals[i][0][0] > lvl[cLvl].array[0].length-1) { lvl[cLvl].portals[i][0][0] -= lvl[cLvl].array[0].length };
-                    if (lvl[cLvl].portals[i][1][0] > lvl[cLvl].array[0].length-1) { lvl[cLvl].portals[i][1][0] -= lvl[cLvl].array[0].length };
+                        if (lvl[cLvl].portals[i][0][0] < 0) { lvl[cLvl].portals[i][0][0] += lvl[cLvl].array[0].length };
+                        if (lvl[cLvl].portals[i][1][0] < 0) { lvl[cLvl].portals[i][1][0] += lvl[cLvl].array[0].length };
+                        if (lvl[cLvl].portals[i][0][0] > lvl[cLvl].array[0].length-1) { lvl[cLvl].portals[i][0][0] -= lvl[cLvl].array[0].length };
+                        if (lvl[cLvl].portals[i][1][0] > lvl[cLvl].array[0].length-1) { lvl[cLvl].portals[i][1][0] -= lvl[cLvl].array[0].length };
+                    }
                 }
 
                 var xC = lvl[cLvl].end[0];

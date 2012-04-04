@@ -2,19 +2,8 @@
     <head>
 	<title>Paper Kirby</title>
 
-	<meta charset="utf-8" />
-
-	<script type="text/javascript" src="JS/glMatrix-0.9.5.min.js"></script>
-	<script type="text/javascript" src="JS/webgl-utils.js"></script>
-	<script type="text/javascript" src="JS/levels.js"></script>
-	<script type="text/javascript" src="JS/Models/Map.js"></script>
-	<script type="text/javascript" src="JS/Models/Portal.js"></script>
-	<script type="text/javascript" src="JS/Models/Kirby.js"></script>
-	<script type="text/javascript" src="JS/Colisions.js"></script>
-        <script type="text/javascript" src="JS/Maths.js"></script>
-	<script type="text/javascript" src="JS/Powers.js"></script>
-	<script type="text/javascript" src="JS/miniMap.js"></script>
-
+	<meta charset="utf-8" />        
+        <script type="text/javascript" src="JS/scripts.php"></script>
 	<style type="text/css">
 	    .touch {
 		height: 44px;
@@ -22,9 +11,6 @@
 	    }
             
             .info {
-                height: 44px;
-                width: 44px;
-                
                 position: absolute;
                 left: 10;
                 top: 10;
@@ -35,6 +21,33 @@
                 opacity: 0.4;
                 
                 border-radius: 10px;
+                cursor: default;
+            }
+            
+            .infoHidden {
+                position: absolute;
+                left: 10;
+                top: 10;
+                
+                text-align: center;
+                color: black;
+                background: white;
+                opacity: 0.4;
+                
+                border-radius: 10px;
+                cursor: default;
+                visibility: hidden;
+            }
+            
+            #infoIcon {
+                width: 44px;
+                height: 44px;
+            }
+            
+            #infoPanel {
+                width: 256px;
+                height: 128px;
+                font-size: 14;
             }
 
 	    #canvas {
@@ -81,18 +94,18 @@
 	    uniform bool uUseLighting;
 
 	    void main(void) {
-	    vec3 lightWeighting;
-	    if (!uUseLighting) {
-            lightWeighting = vec3(1.0, 1.0, 1.0);
-	    } else {
-            vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
+                vec3 lightWeighting;
+                if (!uUseLighting) {
+                    lightWeighting = vec3(1.0, 1.0, 1.0);
+                } else {
+                    vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
 
-            float directionalLightWeighting = max(dot(normalize(vTransformedNormal), lightDirection), 0.0);
-            lightWeighting = uAmbientColor + uPointLightingColor * directionalLightWeighting;
-	    }
-	    vec4 fragmentColor;
-            fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-	    gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
+                    float directionalLightWeighting = max(dot(normalize(vTransformedNormal), lightDirection), 0.0);
+                    lightWeighting = uAmbientColor + uPointLightingColor * directionalLightWeighting;
+                }
+                vec4 fragmentColor;
+                fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+                gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
 	    }
 	</script>
 
@@ -119,14 +132,35 @@
 	</script>
 
 	<script type="text/javascript" src="JS/webgl.js"></script>
+        
+        <script type="text/javascript">
+            
+            function infoClick(e){
+                console.log(e);
+                if (e.target.id == "infoIcon") {
+                    e.target.className += "Hidden";
+                    document.getElementById("infoPanel").className = "info";
+                } else if (e.target.id == "infoPanel") {
+                    e.target.className += "Hidden";
+                    document.getElementById("infoIcon").className = "info";
+                }
+            }
+            
+        </script>
     </head>
     <body onload="webGLStart();">
 	<header>
-            <div id="infoIcon" class="info">
+            <div id="infoIcon" class="info" onclick="infoClick(window.event);">
                 i
             </div>
-            <div id="infoPanel" class="info" hidden="true">
-                blah
+            <div id="infoPanel" class="infoHidden" onclick="infoClick(window.event);">
+                <b>How does it work?</b><br>
+                Left/Right <b>OR</b> Q/D : <i>move</i><br>
+                Up <b>OR</b> Z : <i>jump</i><br>
+                Shift : <i>sprint</i><br>
+                Ctrl + <i>move</i> : <i>split</i><br>
+                Ctrl + Down <b>OR</b> Ctrl + S : <i>invert</i><br>
+                Ctrl + <i>jump</i> : <i>reset</i><br>
             </div>
             
 	    Paper Kirby

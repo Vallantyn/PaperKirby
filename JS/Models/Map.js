@@ -70,10 +70,14 @@ function Map(a) {
 	this.texture.img.src = "Res/map.png";
 
 	this.portals = new Array();
-
-	for (var i = 0; i<lvl[cLvl].portals.length; i++) {
-	    this.portals.push(new Portal(lvl[cLvl].portals[i][0][0], lvl[cLvl].portals[i][0][1], lvl[cLvl].portals[i][1][0], lvl[cLvl].portals[i][1][1]))
-	}
+        
+        if (lvl[cLvl].portals) {
+            //this.hasPortal = true;
+            for (var i = 0; i<lvl[cLvl].portals.length; i++) {
+                this.portals.push(new Portal(lvl[cLvl].portals[i][0][0], lvl[cLvl].portals[i][0][1], lvl[cLvl].portals[i][1][0], lvl[cLvl].portals[i][1][1]))
+            }
+        } else {map.portals = false;}
+        
 	for (var i=0; i<this.portals.length; i++) this.portals[i].Init();
 
 	this.exit = new Exit(lvl[cLvl].end[0], lvl[cLvl].end[1],lvl[cLvl].dir ,lvl[cLvl].next);
@@ -87,6 +91,7 @@ function Map(a) {
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        //gl.bindTexture(gl.TEXTURE_2D, null);
 	gl.uniform1i(shaderProgram.samplerUniform, 0);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -100,7 +105,7 @@ function Map(a) {
 
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 	setMatrixUniforms();
-	gl.drawElements(gl.TRIANGLES, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+	gl.drawElements(gl.LINES, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
 	mvPopMatrix();
     }
